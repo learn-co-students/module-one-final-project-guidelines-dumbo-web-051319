@@ -9,7 +9,6 @@ class Utility
       login
     elsif user.password == password
       puts "Welcome back #{user.name}"
-
       UserUI.master(user)
     end
   end

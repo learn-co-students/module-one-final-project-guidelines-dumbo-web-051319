@@ -10,10 +10,3 @@ if choice == "Sign_up"
 elsif choice == "Log_in"
   Utility.login
 end
-#
-# post = prompt.ask('Make a post', default: ENV['POST'])
-# Post.create(content: post)
-
-
-
-# puts "HELLO WORLD"

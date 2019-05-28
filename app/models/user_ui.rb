@@ -14,13 +14,12 @@ class UserUI
     content = $prompt.ask('What do you want to post?', default: ENV['CONTENT'])
     Post.create(account_id: user.id, content: content)
   end
+  
   def self.my_post(user)
     posts = Post.where(account_id: user.id)
     posts.each do |post|
       puts post.content
     end
-
-    
   end
 
 
