@@ -1,3 +1,4 @@
-class Roof < ActiveRecord::Base
-
+class Roof< ActiveRecord::Base
+  has_many :bookings
+  has_many :users, through: :bookings
 end

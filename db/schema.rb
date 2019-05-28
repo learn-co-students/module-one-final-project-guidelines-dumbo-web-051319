@@ -12,11 +12,29 @@
 
 ActiveRecord::Schema.define(version: 20190528154131) do
 
+  create_table "bookings", force: :cascade do |t|
+    t.integer  "roof_id"
+    t.integer  "user_id"
+    t.datetime "date_time"
+    t.integer  "party_size"
+  end
+
+  create_table "roofs", force: :cascade do |t|
+    t.string  "name"
+    t.string  "dress_code"
+    t.integer "price_range"
+    t.string  "location"
+    t.string  "entertainment"
+    t.boolean "dog"
+    t.boolean "food"
+    t.boolean "chill"
+    t.boolean "happy_hour"
+    t.integer "ig_rating"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
-    t.string "favorite"
-    t.string "booking_info"
   end
 
 end
