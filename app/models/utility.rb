@@ -66,14 +66,16 @@ class Utility
     :resolution => "high"
   end
   #Show Posts and user can select
-  def self.show_posts(post_ary)
+  def self.show_posts(post_ary, user)
     # post_ary = ["'First Post with Picture (may be)' 'Fanqiang Meng' 6", "'Ok i am good' 'Fanqiang Meng' 5"]
     puts "Posts"
     post = $prompt.select("", post_ary)
     desplay_post(post)
-    choice = $prompt.select("", %w(Back Exit))
+    choice = $prompt.select("", %w(Back Back_to_top Exit))
     if choice == "Back"
       show_posts(post_ary)
+    elsif choice == "Back_to_top"
+      UserUI.master(user)
     else
       puts "See ya~~~~"
     end

@@ -1,5 +1,5 @@
 class AllPosts
- # arr = array.new[]
+ # return all the post of a user in text
   def self.get_account_name(id)
     Account.find_by(id: id).name
   end
@@ -8,7 +8,6 @@ class AllPosts
   end
   def self.get_post_content(id, i)
     Account.find_by(id: id).posts[i].content
-    # binding.pry
   end
   def self.get_post_together(id, i)
     content = get_post_content(id, i)
