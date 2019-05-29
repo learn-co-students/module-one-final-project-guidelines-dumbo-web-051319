@@ -30,6 +30,8 @@ end
   # saves this illness and it gets added to that users diseases(name)
 # Can you describe it?
   # saves the diseases(description)
+# What state were you treated in?
+  # gets the location needed to be matched with to cross out doctors from other states
 # Who was your doctor:
   # gives user list of doctor to choose from with their specialty
   # optional: description
@@ -69,7 +71,7 @@ end
       # if not, bring back to menu
 
 ##### LOG OUT? ######
-  # Alright then feel better! 
+  # Alright then feel better!
     # quits out app
 
 
