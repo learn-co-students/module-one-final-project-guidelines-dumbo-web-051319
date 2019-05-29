@@ -4,14 +4,14 @@ User.destroy_all
 Roof.destroy_all
 Booking.destroy_all
 
-adam = User.create(name:"Adam", email: " adam.@gmail.com")
-bob = User.create(name:"Bob", email: " bob.@gmail.com")
-catherine = User.create(name:"Catherine", email: " catherine.@gmail.com")
-danielle = User.create(name:"Danielle", email: " danielle.@gmail.com")
-eric = User.create(name:"Eric", email: " eric.@gmail.com")
-fan = User.create(name:"Fan", email: " fan.@gmail.com")
-george = User.create(name:"George", email: " george.@gmail.com")
-henry = User.create(name:"Henry", email: " henry.@gmail.com")
+adam = User.create(name:"Adam", email: "adam.@gmail.com")
+bob = User.create(name:"Bob", email: "bob.@gmail.com")
+catherine = User.create(name:"Catherine", email: "catherine.@gmail.com")
+danielle = User.create(name:"Danielle", email: "danielle.@gmail.com")
+eric = User.create(name:"Eric", email: "eric.@gmail.com")
+fan = User.create(name:"Fan", email: "fan.@gmail.com")
+george = User.create(name:"George", email: "george.@gmail.com")
+henry = User.create(name:"Henry", email: "henry.@gmail.com")
 
 roof1=Roof.create(name:"Night of Joy", dress_code: "Casual", price_range: 1, location: "Brooklyn",  dog: true,  food: true,  ig_rating: 1,  entertainment: false,  chill: true,  happy_hour: true )
 roof2=Roof.create(name:"High Line", dress_code: "Casual", price_range: 2, location: "Manhattan",  dog: false,  food: false,  ig_rating: 3,  entertainment: true,  chill: true,  happy_hour: true )
