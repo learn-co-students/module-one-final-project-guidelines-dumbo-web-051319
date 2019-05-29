@@ -1,3 +1,5 @@
 class Post < ActiveRecord::Base
-  belongs_to :accounts
+  has_many :likes
+  has_many :accounts, through: :likes
+  belongs_to :account
 end

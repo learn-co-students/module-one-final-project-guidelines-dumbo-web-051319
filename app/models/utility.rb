@@ -1,5 +1,7 @@
+# require "FileUtils"
+require 'catpix'
 class Utility
-
+  #Login
   def self.login
     account_id = $prompt.ask('Account ID:', default: ENV['ACCOUNT_ID'])
     password = $prompt.mask("Password:")
@@ -12,12 +14,77 @@ class Utility
       UserUI.master(user)
     end
   end
+  #Sign Up
   def self.sign_up
-    name = $prompt.ask('What is your name?', default: ENV['USER'])
+    name = $prompt.ask('What is your name?', default: ENV['New User'])
     password = $prompt.mask("Create password:")
     Account.create(name: name, password: password)
     new_account = Account.where("name == ?", name)[-1]
     puts "Here is you Account ID #{new_account.id}"
   end
+  #Upload Picture
+  def self.upload_picture(src_dir)
+    # src_dir = self.pick_picture
+    dst_dir = "/Users/fanqiangmeng/Development/ActiveRecord/module-one-final-project-guidelines-dumbo-web-051319/picture"
+    if File.exist? (src_dir)
+      puts "Uploading: #{File.basename(src_dir)}"
+      sleep(rand(5))
+      FileUtils.cp(src_dir, dst_dir)
+    else
+      puts "Sorry, We can't find it."
+    end
+  end
+  #Select a Picture, User can Preview and Upload
+  def self.pick_picture
+    ary =  Dir["/Users/fanqiangmeng/Downloads/Picture_Sample/*.jpg"]
+    pictures = ary.map {|ele| File.basename(ele)}
+    binding.pry
+    choice = $prompt.select("Pick one Picture", pictures)
+    src_dir = "/Users/fanqiangmeng/Downloads/Picture_Sample/#{choice}"
+    choice2 = $prompt.select("Pick one Picture", %w(Upload Preview Back))
+    if choice2 == "Upload"
+      self.upload_picture(src_dir)
+    elsif choice2 == "Preview"
+      self.view_picture(src_dir)
+      choice3 = $prompt.select("Pick one Picture", %w(Back))
+      self.pick_picture
+    else
+      self.pick_picture
+    end
+    src_dir
+  end
+  #Display a Picture
+  def self.view_picture(src_dir)
+    Catpix::print_image src_dir,
+    :limit_x => 1.0,
+    :limit_y => 0,
+    :center_x => true,
+    :center_y => true,
+    :bg => "white",
+    :bg_fill => true,
+    :resolution => "high"
+  end
+  #Show Posts and user can select
+  def self.show_posts
+    post_ary = ["'First Post with Picture (may be)' 'Fanqiang Meng' 6", "'Ok i am good' 'Fanqiang Meng' 5"]
+    puts "Posts"
+    post = $prompt.select("", post_ary)
+    desplay_post(post)
+  end
+  #Display the Post with picture
+  def self.desplay_post(post)
+    post_id = post.split(" ")[-1].to_i
+    post_info = Post.find_by(id: post_id)
+    puts "#{Account.find_by(id: post_info.account_id).name}"
+    view_picture(post_info.picture_path)
+    puts "#{post_info.content}"
+    choice = $prompt.select("", %w(Back Exit))
+    if choice == "Back"
+      show_posts
+    else
+      puts "See ya~~~~"
+    end
+  end
 end
-#fahdflekajfdlasf
+
+  #fahdflekajfdlasf

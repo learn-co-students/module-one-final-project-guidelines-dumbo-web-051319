@@ -12,16 +12,14 @@ class UserUI
 
   def self.create_post(user)
     content = $prompt.ask('What do you want to post?', default: ENV['CONTENT'])
-    Post.create(account_id: user.id, content: content)
+    path = Utility.pick_picture
+    Post.create(account_id: user.id, content: content, picture_path: path)
   end
-  
+
   def self.my_post(user)
     posts = Post.where(account_id: user.id)
     posts.each do |post|
       puts post.content
     end
   end
-
-
-
 end
