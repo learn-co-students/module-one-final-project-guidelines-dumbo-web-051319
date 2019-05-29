@@ -1,4 +1,4 @@
 class Booking< ActiveRecord::Base
-  belongs_to :users
-  belongs_to :roofs
+  belongs_to :user
+  belongs_to :roof
 end

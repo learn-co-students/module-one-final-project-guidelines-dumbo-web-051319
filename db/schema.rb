@@ -25,10 +25,10 @@ ActiveRecord::Schema.define(version: 20190528154131) do
     t.integer "price_range"
     t.string  "location"
     t.string  "entertainment"
-    t.boolean "dog"
-    t.boolean "food"
-    t.boolean "chill"
-    t.boolean "happy_hour"
+    t.string  "dog"
+    t.string  "food"
+    t.string  "chill"
+    t.string  "happy_hour"
     t.integer "ig_rating"
   end
 
