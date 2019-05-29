@@ -28,7 +28,7 @@ class CommandLineInterface
 
       def home_page
           prompt = TTY::Prompt.new
-          choice = prompt.select("",%w(ViewProfile Bookings),active_color: :cyan)
+          choice = prompt.select("",%w(ViewProfile Bookings Quit),active_color: :cyan)
           if choice == "ViewProfile"
               choice = prompt.select("",%w(Your_Reservation Update_Booking Cancel_Booking Back ))
               if choice == "Your_Reservation"
@@ -40,6 +40,7 @@ class CommandLineInterface
                 puts "Date: #{booking.date_time} "
                 puts "Party Size: #{booking.party_size} "
                 puts  "🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟"
+                self.home_page
                 end
 
                 else
@@ -51,6 +52,25 @@ class CommandLineInterface
                 choice = prompt.select("",%w(ByTime ByPartySize))
                 if choice == "ByTime"
                   puts "Updating reservation "
+                  puts "Here are your existing reservations"
+                  puts  "🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟"
+                  $user.bookings.map do |booking|
+                  puts "Roof Name: #{booking.roof.name} "
+                  puts "Date: #{booking.date_time} "
+                  puts "Party Size: #{booking.party_size} "
+                  puts  "🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟"
+                  puts "Would you like to update this reservation?"
+                  choice = prompt.select("",%w(YES NO))
+                    if choice == "YES"
+                      puts "What is the new date?"
+                      user_input = gets.chomp
+                      booking.update(date_time: user_input)
+                      puts "Updating reservation"
+                      sleep(1)
+                      puts "📝Reservation Updated📝"
+                      self.home_page
+                    end
+                  end
                 elsif choice == "ByPartySize"
                   puts "Here are your existing reservations"
                   puts  "🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟🎟"
@@ -62,11 +82,13 @@ class CommandLineInterface
                   puts "Would you like to update this reservation?"
                   choice = prompt.select("",%w(YES NO))
                     if choice == "YES"
-                      puts "What is your new party size"
+                      puts "What is your new party size?"
                       user_input = gets.chomp
                       booking.update(party_size: user_input)
                       puts "Updating reservation"
                       sleep(1)
+                      puts "📝Reservation Updated📝"
+                      self.home_page
                     end
                   end
                 end
@@ -102,7 +124,6 @@ class CommandLineInterface
               end
 
 
-
           elsif choice == "Bookings"
               puts "How would you like to book your roof"
               choice = prompt.select("",%w(Book_By_Location Book_By_Features Back))
@@ -126,12 +147,25 @@ class CommandLineInterface
                     sleep(0.75)
                   end
                     puts "Please enter the name of your desired roof"
-                    user_input = gets.chomp
+                    booking_name = gets.chomp
+                    puts "Please enter the party size"
+                    booking_party_size = gets.chomp
+                    puts "Please enter the date of your reservation"
+                    booking_date = gets.chomp
+                    puts "thank you for using RoofHopper, We are generating your reservation"
+                    puts "⏳⏳⏳⏳⏳"
+                    sleep(2)
+                    # binding.pry
+                    roof_id= Roof.find_by(name: booking_name).id
+                    Booking.create(user_id: $user.id, roof_id: roof_id,  date_time: booking_date, party_size: booking_party_size)
+                    puts " your reservation has been made and added to your profile"
+                    self.home_page
                 elsif choice == "Brooklyn"
                   puts "🌉🌉🌉🌉🌉🌉🌉🌉🌉🌉🌉"
                 brooklyn_roofs= Roof.all.select {|roof|roof.location == "Brooklyn" }
                 brooklyn_roofs.each do |roof|
                     puts "Name: #{roof.name}"
+                    puts "Roof ID: #{roof.id}"
                     puts "Dress code: #{roof.dress_code}"
                     puts "Price range: #{roof.price_range}/5"
                     puts "Location: #{roof.location}"
@@ -152,9 +186,12 @@ class CommandLineInterface
                   booking_date = gets.chomp
                   puts "thank you for using RoofHopper, We are generating your reservation"
                   puts "⏳⏳⏳⏳⏳"
-                  sleep(3)
-                  binding.pry
-                  Booking.create(user_id: $user.id, roof_id: booking_name.id,  date_time: booking_date, party_size: booking_party_size)
+                  sleep(2)
+                  roof_id= Roof.find_by(name: booking_name).id
+                  # binding.pry
+                  Booking.create(user_id: $user.id, roof_id: roof_id,  date_time: booking_date, party_size: booking_party_size)
+                  puts " your reservation has been made and added to your profile"
+                  self.home_page
                 elsif choice == "Back"
                 self.home_page
                 end
@@ -162,6 +199,12 @@ class CommandLineInterface
               elsif choice == "Back"
                 self.home_page
               end
+
+            elsif choice == "Quit"
+              sleep(1)
+              puts "Have a nice day #{$user.name}"
+              sleep(1)
+              exit
             end
           end
 
