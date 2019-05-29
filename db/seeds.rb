@@ -1,4 +1,8 @@
-###### 15 DOCTORS ######
+###### 15 DOCTORS #####
+Record.delete_all
+Doctor.delete_all
+Patient.delete_all
+
 doctor_smith = Doctor.new(name: "Dr. Eric Smith", specialty: "Internal Medicine", hospital: "New York Presbyterian Hospital")
 doctor_lee = Doctor.new(name: "Dr. Percy Lee", specialty: "Cardiologist", hospital: "New York Presbyterian Hospital")
 doctor_johnson = Doctor.new(name: "Dr. Amelia Johnson", specialty: "Endocrinologist", hospital: "New York Presbyterian Hospital")
