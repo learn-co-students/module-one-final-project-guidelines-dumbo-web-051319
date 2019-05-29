@@ -23,27 +23,28 @@ class Utility
     puts "Here is you Account ID #{new_account.id}"
   end
   #Upload Picture
-  def self.upload_picture(src_dir)
+  def self.upload_picture(src_dir, user, content)
     # src_dir = self.pick_picture
     dst_dir = "/Users/fanqiangmeng/Development/ActiveRecord/module-one-final-project-guidelines-dumbo-web-051319/picture"
     if File.exist? (src_dir)
       puts "Uploading: #{File.basename(src_dir)}"
       sleep(rand(5))
       FileUtils.cp(src_dir, dst_dir)
+      Post.create(account_id: user.id, content: content, picture_path: dst_dir + "/#{File.basename(src_dir)}")
+      UserUI.master(user)
     else
       puts "Sorry, We can't find it."
     end
   end
   #Select a Picture, User can Preview and Upload
-  def self.pick_picture
+  def self.pick_picture(user, content)
     ary =  Dir["/Users/fanqiangmeng/Downloads/Picture_Sample/*.jpg"]
     pictures = ary.map {|ele| File.basename(ele)}
-    binding.pry
     choice = $prompt.select("Pick one Picture", pictures)
     src_dir = "/Users/fanqiangmeng/Downloads/Picture_Sample/#{choice}"
     choice2 = $prompt.select("Pick one Picture", %w(Upload Preview Back))
     if choice2 == "Upload"
-      self.upload_picture(src_dir)
+      self.upload_picture(src_dir, user, content)
     elsif choice2 == "Preview"
       self.view_picture(src_dir)
       choice3 = $prompt.select("Pick one Picture", %w(Back))
@@ -65,25 +66,26 @@ class Utility
     :resolution => "high"
   end
   #Show Posts and user can select
-  def self.show_posts
-    post_ary = ["'First Post with Picture (may be)' 'Fanqiang Meng' 6", "'Ok i am good' 'Fanqiang Meng' 5"]
+  def self.show_posts(post_ary)
+    # post_ary = ["'First Post with Picture (may be)' 'Fanqiang Meng' 6", "'Ok i am good' 'Fanqiang Meng' 5"]
     puts "Posts"
     post = $prompt.select("", post_ary)
     desplay_post(post)
+    choice = $prompt.select("", %w(Back Exit))
+    if choice == "Back"
+      show_posts(post_ary)
+    else
+      puts "See ya~~~~"
+    end
   end
   #Display the Post with picture
   def self.desplay_post(post)
     post_id = post.split(" ")[-1].to_i
     post_info = Post.find_by(id: post_id)
     puts "#{Account.find_by(id: post_info.account_id).name}"
+    # binding.pry
     view_picture(post_info.picture_path)
     puts "#{post_info.content}"
-    choice = $prompt.select("", %w(Back Exit))
-    if choice == "Back"
-      show_posts
-    else
-      puts "See ya~~~~"
-    end
   end
 end
 

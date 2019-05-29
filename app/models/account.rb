@@ -1,5 +1,5 @@
 class Account < ActiveRecord::Base
   has_many :posts
   has_many :likes
-  has_many :posts, through: :likes
+  # has_many :posts, through: :likes
 end
