@@ -23,3 +23,4 @@ Like.create(post: post1, account: user1)
 Like.create(post: post1, account: user2)
 Like.create(post: post1, account: user3)
 Like.create(post: post1, account: user4)
+#seeeds
