@@ -50,15 +50,17 @@ while user == nil
         sleep(2)
       system "clear"
       sleep(2)
-      puts "Great! Welcome #{user.name}. Please remember your password to sign into Medical Tracker in the future!"
+      puts "Great! Welcome #{user.name}, your ID is #{user.id}. Please remember your password and ID to sign into Medical Tracker in the future!"
       # add progress bar #
       sleep(2)
 
  ###### GREETING -> SIGN IN ######
     elsif choice == "Sign-In"
       sleep(1)
+      patient_id = prompt.ask("Please enter your ID")
       patient_password = prompt.mask("Please enter your password")
-       user = Patient.find_by password: patient_password
+
+       user = Patient.find_by(password: patient_password) && Patient.find(patient_id)
          if user
            # add progress bar #
            sleep(0.5)
@@ -142,22 +144,32 @@ while menu_choice != "Log-Out?"
 
     ###### MY RECORDS ######
     elsif menu_choice == "My-Records"
-      sleep(2)
-      record_choice = prompt.select("What would you like to view?", %w(All-Records Doctors Hospitals Recent-Record))
+      if user.records.empty?
+          # add progress bar #
+          sleep(0.5)
+          spinner.auto_spin
+          sleep(3)
+          spinner.error("(Record Not Found)")
+          sleep(2)
+          # end progress bar #
+        puts "Hmm...looks like you have no records"
+      else
+        sleep(2)
 
+      record_choice = prompt.select("What would you like to view?", %w(All-Records Doctors Hospitals Recent-Record Back-to-Menu))
         ###### MY RECORDS -> ALL RECORDS ######
         if record_choice == "All-Records"
-          if user.records.empty?
-              # add progress bar #
-              sleep(0.5)
-              spinner.auto_spin
-              sleep(3)
-              spinner.error("(Records Not Found)")
-              sleep(2)
-              # end progress bar #
-            puts "Hmm...looks like you have no records"
-            sleep(2)
-          end
+          # if user.records.empty?
+          #     # add progress bar #
+          #     sleep(0.5)
+          #     spinner.auto_spin
+          #     sleep(3)
+          #     spinner.error("(Records Not Found)")
+          #     sleep(2)
+          #     # end progress bar #
+          #   puts "Hmm...looks like you have no records"
+          #   sleep(2)
+          # end
             # add progress bar#
             sleep(0.5)
             spinner.auto_spin
@@ -182,16 +194,16 @@ while menu_choice != "Log-Out?"
 
         ###### MY RECORDS -> DOCTORS ######
         elsif record_choice == "Doctors"
-          if user.records.empty?
-            # add progress bar #
-            sleep(0.5)
-            spinner.auto_spin
-            sleep(3)
-            spinner.error("(Records Not Found)")
-            sleep(2)
-            # end progress bar #
-            puts "Hmm...looks like you have no doctors"
-          end
+          # if user.records.empty?
+          #     # add progress bar #
+          #     sleep(0.5)
+          #     spinner.auto_spin
+          #     sleep(3)
+          #     spinner.error("(Records Not Found)")
+          #     sleep(2)
+          #     # end progress bar #
+          #   puts "Hmm...looks like you have no doctors"
+          # end
             # add progress bar#
             sleep(0.5)
             spinner.auto_spin
@@ -207,16 +219,16 @@ while menu_choice != "Log-Out?"
 
         ###### MY RECORDS -> RECENT RECORD ######
         elsif record_choice == "Recent-Record"
-          if user.records.empty?
-            # add progress bar #
-            sleep(0.5)
-            spinner.auto_spin
-            sleep(3)
-            spinner.error("(Record Not Found)")
-            sleep(2)
-            # end progress bar #
-            puts "Hmm...looks like you have no records"
-          end
+          # if user.records.empty?
+          #   # add progress bar #
+          #   sleep(0.5)
+          #   spinner.auto_spin
+          #   sleep(3)
+          #   spinner.error("(Record Not Found)")
+          #   sleep(2)
+          #   # end progress bar #
+          #   puts "Hmm...looks like you have no records"
+          # end
             # add progress bar#
             sleep(0.5)
             spinner.auto_spin
@@ -225,29 +237,30 @@ while menu_choice != "Log-Out?"
             sleep(2)
             # end progress bar #
           my_last = user.records.last
+          puts "--------------------------------"
           puts "Illness: #{my_last.illness}"
-          if my_last.cured == false
-            puts "Cured?: Not Cured"
-          else
-            puts "Cured?: Cured"
-          end
+            if my_last.cured == false
+              puts "Cured?: Not Cured"
+            else
+              puts "Cured?: Cured"
+            end
           puts "Description: #{my_last.description}"
           puts "Doctor: #{my_last.doctor.name}"
           puts "Hospital: #{my_last.doctor.hospital}"
           puts "Date: #{my_last.created_at}"
-
-        ###### MY RECORDS -> HOSPITALS ######
-        else record_choice == "Hospitals"
-          if user.records.empty?
-            # add progress bar #
-            sleep(0.5)
-            spinner.auto_spin
-            sleep(3)
-            spinner.error("(Record Not Found)")
-            sleep(2)
-            # end progress bar #
-            puts "Hmm...looks like you have no records"
-          end
+          puts "--------------------------------"
+          sleep(2)
+        elsif record_choice == "Hospitals"
+          # if user.records.empty?
+          #   # add progress bar #
+          #   sleep(0.5)
+          #   spinner.auto_spin
+          #   sleep(3)
+          #   spinner.error("(Record Not Found)")
+          #   sleep(2)
+          #   # end progress bar #
+          #   puts "Hmm...looks like you have no records"
+          # end
             # add progress bar#
             sleep(0.5)
             spinner.auto_spin
@@ -256,65 +269,173 @@ while menu_choice != "Log-Out?"
             sleep(2)
             # end progress bar #
           my_hospitals = user.records.map {|x| x.doctor.hospital}.uniq
+          puts "These are the hospitals you were treated at: "
           puts "--------------------------------"
-          my_hospitals.each_with_index {|hospital, index| puts "#{index + 1}. #{hospital}"}
+          my_hospitals.each_with_index {|hospital, index| puts "          #{index + 1}. #{hospital}"}
           puts "--------------------------------"
+        else record_choice == "Back-to-Menu"
+          menu_choice
           sleep(2)
         end #(belongs to My Record option choices)#
+      end
 
       ##### UPDATE RECORD ########
       elsif menu_choice == "Update-Records"
+        sleep(2)
         if user.records.empty?
+            # add progress bar #
+            sleep(0.5)
+            spinner.auto_spin
+            sleep(3)
+            spinner.error("(Record Not Found)")
+            sleep(2)
+            # end progress bar #
           puts "Hmm...looks like you have no records"
         else
+          sleep(2)
           my_illnesses = user.records.map {|x| "#{x.id}: #{x.illness}"}
-          illness_choice = prompt.select("records", my_illnesses)
-          update_id = illness_choice.split(":")
-          illness_instance = update_id[0]
-          update_instance = user.records.find_by_id(illness_instance)
-          # binding.pry
-          update_instance.update(cured: true)
-          user.reload
-          # binding.pry
-          # user.records.find_by_id(update_instance.id).save
+          illness_choice = prompt.select("Please choose a record to update", my_illnesses)
+            # add progress bar #
+            sleep(0.5)
+            spinner.auto_spin
+            sleep(3)
+            spinner.success("(Record Selected!)")
+            sleep(2)
+          end
+          update_choice = prompt.select("What would you like to update about this record?", %w(Cure-Status Illness Description Back-to-Menu))
+            ##### UPDATE RECORD -> CURED? ########
+            if update_choice == "Cure-Status"
+              # add progress bar #
+              sleep(0.5)
+              spinner.auto_spin
+              sleep(3)
+              spinner.success("(Changing Cure Status)")
+              # end progress bar #
+                update_id = illness_choice.split(":")
+                illness_instance = update_id[0]
+                update_instance = user.records.find_by_id(illness_instance)
+                update_instance.update(cured: true)
+                user.reload
 
-          # update_instance.update
-        end
+                sleep(2)
+                puts "--------------------------------"
+                puts "Great! Your status have been updated"
+                puts "--------------------------------"
 
+            ##### UPDATE RECORD -> CURED? ########
+            elsif update_choice == "Illness"
+              sleep(2)
+              update_illness = prompt.ask("Please give your illness a new name.")
+                update_id = illness_choice.split(":")
+                illness_instance = update_id[0]
+                update_instance = user.records.find_by_id(illness_instance)
+                # binding.pry
+                update_instance.update(illness: update_illness)
+                user.reload
+                  # add progress bar #
+                  sleep(0.5)
+                  spinner.auto_spin
+                  sleep(3)
+                  spinner.success("(Changing Cure Status)")
+                  # end progress bar #
+                sleep(2)
+                puts "--------------------------------"
+                puts "Great! You record name have been updated"
+                puts "--------------------------------"
 
+            ##### UPDATE RECORD -> DESCRIPTION ########
+            elsif update_choice == "Description"
+              sleep(2)
+              update_description = prompt.ask("Please rewrite your symptoms for this record")
+                # my_illnesses = user.records.map {|x| "#{x.id}: #{x.illness}"}
+                # illness_choice = prompt.select("records", my_illnesses)
+                update_id = illness_choice.split(":")
+                illness_instance = update_id[0]
+                update_instance = user.records.find_by_id(illness_instance)
+                # binding.pry
+                update_instance.update(description: update_description)
+                user.reload
+                  sleep(0.5)
+                  spinner.auto_spin
+                  sleep(3)
+                  spinner.success("(Changing Illness Name)")
+                puts "--------------------------------"
+                puts "Great! You description have been updated"
+                puts "--------------------------------"
+
+              ##### UPDATE RECORD -> BACK TO MENU ########
+              else update_choice == "Back-to-Menu"
+                menu_choice
+            end
 
       ###### DELETE RECORDS ######
       elsif menu_choice == "Delete-Records"
-        delete_choice = prompt.select("Do you want to delete a single record or all records?", %w(Single-Record? All-Records?))
-
+        if user.records.empty?
+            # add progress bar #
+            sleep(0.5)
+            spinner.auto_spin
+            sleep(3)
+            spinner.error("(Record Not Found)")
+            sleep(2)
+            # end progress bar #
+          puts "Hmm...looks like you have no records to delete"
+        else
+          sleep(2)
+          delete_choice = prompt.select("Do you want to delete a single record or all records?", %w(Single-Record? All-Records? Back-to-Menu))
+        end
         ###### DELETE RECORDS -> All RECORDS? ######
         if delete_choice == "All-Records?"
           answer = prompt.yes?("Are you sure you want to delete everything?")
           # binding.pry
-          user.records.destroy_all if answer == true
+          if answer == true
+          user.records.destroy_all
+            # add progress bar #
+            sleep(0.5)
+            spinner.auto_spin
+            sleep(3)
+            spinner.success("(Deleting Record)")
+            sleep(3)
+            # add progress bar #
+          puts "--------------------------------"
+          puts "You've successfully deleted all records"
+          puts "--------------------------------"
+          sleep(2)
+        else
+          sleep(2)
           puts "Phew..." if answer == false
-
+        end
         ###### DELETE RECORDS -> SINGLE RECORD? ######
-        else delete_choice == "Single-Record?"
-          if user.records.empty?
-            puts "Hmm...looks like you have no records"
-          else
-            my_illnesses = user.records.map {|x| "#{x.id}: #{x.illness}"}
-            illness_choice = prompt.select("records", my_illnesses)
-            delete_id = illness_choice.split(":")
-            illness_instance = delete_id[0]
-            user.records.find_by_id(illness_instance).delete
-            user.reload
-          end
-      end #(belongs to Delete Records menu choices)#
+        elsif delete_choice == "Single-Record?"
+          my_illnesses = user.records.map {|x| "#{x.id}: #{x.illness}"}
+          illness_choice = prompt.select("Please choose which record you want ", my_illnesses)
+          delete_id = illness_choice.split(":")
+          illness_instance = delete_id[0]
+          user.records.find_by_id(illness_instance).delete
+          user.reload
+            # add progress bar #
+            sleep(0.5)
+            spinner.auto_spin
+            sleep(3)
+            spinner.success("(Deleting Record)")
+            sleep(3)
+            # add progress bar #
+          puts "--------------------------------"
+          puts "You've successfully deleted 1 record"
+          puts "--------------------------------"
+          sleep(2)
 
-      ###### LOG OUT? ######
-      else menu_choice == "Log-Out?"
-        sleep(1.5)
-        puts "Hope you feel better!"
-        sleep(1.5)
-        exit
-    end
+        ###### DELETE RECORDS -> BACK TO MENU ######
+        else delete_choice == "Back-to-Menu"
+          menu_choice
+        end #(belongs to Delete Records menu choices)#
+
+    ###### LOG OUT? ######
+    else menu_choice == "Log-Out?"
+      sleep(1.5)
+      puts "Hope you feel better!"
+      sleep(1.5)
+      exit
+  end
 
 end #(belongs to while != logout statement in menu)#
 puts "HELLO WORLD"
