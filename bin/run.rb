@@ -1,47 +1,69 @@
 require_relative '../config/environment'
 require 'pry'
 
-prompt = TTY::Prompt.new
+prompt = TTY::Prompt.new(active_color: :yellow, enable_color: true)
 
-##### GREETING/SIGN IN ######
+
+###### GREETING/LOGIN ######
 user = nil
 while user == nil
 
-choice = prompt.select("Hello, Welcome to Medical Tracker", %w(Sign-Up Sign-In Quit?))
-sleep(1)
-  if choice == "Sign-Up"
+  sleep(1.5)
+  choice = prompt.select("Hello, welcome to Medical Tracker", %w(Sign-Up Sign-In Quit?))
 
-  ### SIGN UP  ###
-    patient_name = prompt.ask("What is your name?")
-    patient_password = prompt.mask("Please enter a new password")
-    patient_age = prompt.ask('What is your age?', convert: :int)
-    patient_conditions = prompt.ask("Tell us a little bit about your pre-existing conditions.")
+  ###### GREETING -> SIGN UP  ######
+    if choice == "Sign-Up"
+      sleep(1)
+      patient_name = prompt.ask("What is your name?")
+      sleep(1)
+      patient_password = prompt.mask("Thanks #{patient_name}! Please enter a new password that we can use to remember you.")
+      sleep(2)
+      # add progress bar #
+      puts "Now that we've set your account up, tell us a little more about yourself."
+      sleep(1)
+      patient_age = prompt.ask('What is your age?', convert: :int)
+      sleep(1)
+      patient_conditions = prompt.ask("Please tell us about any pre-existing condition(s) you have.")
 
-    user = Patient.create(name: patient_name, age: patient_age, previous_conditions: patient_conditions, password: patient_password)
+      user = Patient.create(name: patient_name, age: patient_age, previous_conditions: patient_conditions, password: patient_password)
+      #a dd progress bar #
+      sleep(2)
+      puts "Great! Welcome #{user.name}. Please remember your password to sign into Medical Tracker in the future!"
+      system "clear"
 
-    puts "Great! Welcome #{user.name}, here's your id: #{user.id}. Please remember this to sign-in in the future!"
+ ###### GREETING -> SIGN IN ######
+    elsif choice == "Sign-In"
+      sleep(1)
+      patient_password = prompt.mask("Please enter your password")
+       user = Patient.find_by password: patient_password
+         if user
+           # add progress bar #
+          sleep(2)
+          puts "Welcome back #{user.name}!"
+        else
+          sleep(2)
+          puts "Oh no, looks like we didn't find you...please try again"
+          sleep(3)
+          system "clear"
+      end   #(searching for password match)#
 
-### SIGN IN ###
-  elsif choice == "Sign-In"
-    patient_password = prompt.mask("Please enter your password")
-     user = Patient.find_by password: patient_password
-     if user
-      puts "Welcome back #{user.name}!"
-    else
-      puts "Oh no, looks like we didn't find you...please try again"
-    end
+ ###### QUIT? ######
+    else choice == "Quit?"
+      sleep(1.5)
+      puts "We hope to see you soon!"
+      sleep(1.5)
+      exit
+  end #(choice if statements for login menu)#
 
-  else choice == "Quit?"
-    exit
-  end
-end
+end #(belongs to user while statement)#
 
 
-#### MENU ######
+###### MENU ######
 menu_choice = nil
 while menu_choice != "Log-Out?"
   menu_choice = prompt.select("How can we help you today?", %w(Create-Record My-Records Update-Records Delete-Records Log-Out?))
-    #### CREATE RECORDS ####
+
+    ###### CREATE RECORDS ######
     if menu_choice == "Create-Record"
       record_illness = prompt.ask("What type of illness do you have?")
       record_description = prompt.ask("Please describe how you felt?")
@@ -57,24 +79,26 @@ while menu_choice != "Log-Out?"
 
       puts "Here's your new record!"
       sleep(1)
+      puts "--------------------------------"
       puts "Illness: #{new_record1.illness}"
-      sleep(1)
       puts "Description: #{new_record1.description}"
-      sleep(1)
       puts "Doctor: #{doc.name}"
-      sleep(1)
       puts "Hospital: #{doc.hospital}"
       puts "Date: #{new_record1.created_at}"
+      puts "--------------------------------"
+      sleep(6)
 
-    ##### MY RECORDS #####
+    ###### MY RECORDS ######
     elsif menu_choice == "My-Records"
       record_choice = prompt.select("What would you like to view?", %w(All-Records Doctors Hospitals Recent-Record))
 
+        ###### MY RECORDS -> ALL RECORDS ######
         if record_choice == "All-Records"
           if user.records.empty?
             puts "Hmm...looks like you have no records"
           end
           user.records.map do |x|
+            puts "----------"
             puts "Illness: #{x.illness}"
             puts "Description: #{x.description}"
             puts "Doctor: #{x.doctor.name}"
@@ -83,12 +107,16 @@ while menu_choice != "Log-Out?"
             puts "----------"
             sleep(1)
           end
+
+        ###### MY RECORDS -> DOCTORS ######
         elsif record_choice == "Doctors"
           if user.records.empty?
             puts "Hmm...looks like you have no doctors"
           end
           my_doctors = user.records.map {|x| x.doctor.name}.uniq
           my_doctors.each_with_index {|docs, index| puts "#{index + 1}. #{docs}"}
+
+        ###### MY RECORDS -> RECENT RECORD ######
         elsif record_choice == "Recent-Record"
           my_last = user.records.last
           puts "Illness: #{my_last.illness}"
@@ -99,15 +127,21 @@ while menu_choice != "Log-Out?"
         else record_choice == "Hospitals"
           my_hospitals = user.records.map {|x| x.doctor.hospital}.uniq
           my_hospitals.each_with_index {|hospital, index| puts "#{index + 1}. #{hospital}"}
-        end
+        end #(belongs to My Record option choices)#
+
+      ###### DELETE RECORDS ######
       elsif menu_choice == "Delete-Records"
         delete_choice = prompt.select("Do you want to delete a single record or all records?", %w(Single-Record? All-Records?))
+
+        ###### DELETE RECORDS -> All RECORDS? ######
         if delete_choice == "All-Records?"
           answer = prompt.yes?("Are you sure you want to delete everything?")
           # binding.pry
           user.records.destroy_all if answer == true
           puts "Phew..." if answer == false
         end
+
+        ###### DELETE RECORDS -> SINGLE RECORD? ######
         if delete_choice == "Single-Record?"
           my_illnesses = user.records.map {|x| "#{x.id}: #{x.illness}"}
           illness_choice = prompt.select("records", my_illnesses)
@@ -120,10 +154,15 @@ while menu_choice != "Log-Out?"
           #   new_hash[ill] = 0
           # end
           # binding.pry
-        end
+        end #(belongs to Delete Records menu choices)#
 
-      end
+      ###### LOG OUT? ######
+      else menu_choice == "Log-Out?"
+        sleep(1.5)
+        puts "Hope you feel better!"
+        sleep(1.5)
+        exit
+    end
 
-
-end # belongs to while != logout
+end #(belongs to while != logout statement in menu)#
 puts "HELLO WORLD"
