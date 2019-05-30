@@ -77,7 +77,7 @@ class Utility
   end
   def self.post_options(post, post_ary, user)
     desplay_post(post)
-    choice = $prompt.select("", %w(Comment Back Back_to_top Exit))
+    choice = $prompt.select("Options:", %w(Comment Back Back_to_top Logout))
     if choice == "Back"
       show_posts(post_ary, user)
     elsif choice == "Back_to_top"
@@ -85,7 +85,7 @@ class Utility
     elsif choice == "Comment"
       create_comment(post, user, post_ary)
     else
-      puts "See ya~~~~"
+      Welcome.welcome_to_igl
     end
   end
   #Display the Post with picture

@@ -1,6 +1,6 @@
 class UserUI
   def self.master(user)
-     choice = $prompt.select("Welcome!!", %w(Create_Posts My_Post All_Post Exit))
+     choice = $prompt.select("Options:", %w(Create_Posts My_Post All_Post Logout))
      if choice == "Create_Posts"
        self.create_post(user)
      elsif choice == 'My_Post'
@@ -8,7 +8,7 @@ class UserUI
      elsif choice == 'ALl_Post'
        puts "all posts"
      else
-       puts "See ya~~~"
+       Welcome.welcome_to_igl
      end
   end
 
