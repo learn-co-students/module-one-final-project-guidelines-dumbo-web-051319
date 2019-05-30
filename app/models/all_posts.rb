@@ -12,8 +12,11 @@ class AllPosts
   def self.get_comment_count(id, i)
     Comment.where("post_id == ?", get_post_id(id, i)).count
   end
+  def self.get_like_count(id, i)
+    Like.where("post_id == ?", get_post_id(id, i)).count
+  end
   def self.get_together(id, i)
-    "Post_id: #{get_post_id(id, i)} | Author: #{get_account_name(id)} || #{get_post_content(id, i)} || Comments: #{get_comment_count(id, i)}"
+    "Post_id: #{get_post_id(id, i)} | Author: #{get_account_name(id)} || #{get_post_content(id, i)} || Comments: #{get_comment_count(id, i)} | Likes: #{get_like_count(id, i)}"
   end
   def self.arry_of_posts(user)
     id = user.id

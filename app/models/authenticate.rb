@@ -9,9 +9,9 @@ class Authentication
     bol
   end
   def self.give_options(user, post)
-    option_arry = ["Like", "Comment", "Back", "Back_to_top", "Logout"]
+    option_arry = ["Like", "Comment", "Back", "Back_to_Main_Menu", "Logout"]
     if check_account(user, post) == true
-      option_arry = ["Like", "Comment", "Edit", "Delete", "Back", "Back_to_top", "Logout"]
+      option_arry = ["Like", "Comment", "Edit", "Delete", "Back", "Back_to_Main_Menu", "Logout"]
     end
     option_arry
   end

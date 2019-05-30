@@ -102,7 +102,7 @@ class Utility
     if choice == "Back"
       clear_page
       show_posts(user, users)
-    elsif choice == "Back_to_top"
+    elsif choice == "Back_to_Main_Menu"
       clear_page
       UserUI.master(user)
     elsif choice == "Comment"
@@ -141,6 +141,7 @@ class Utility
         puts "#{Account.find_by(id: comment.account_id).name}"
         puts "#{comment.comment}"
         puts ""
+        sleep(1)
       end
     else
       puts "No comments."
