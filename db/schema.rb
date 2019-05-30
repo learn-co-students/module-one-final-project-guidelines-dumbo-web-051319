@@ -22,13 +22,12 @@ ActiveRecord::Schema.define(version: 20190528154131) do
   create_table "roofs", force: :cascade do |t|
     t.string  "name"
     t.string  "dress_code"
-    t.integer "price_range"
     t.string  "location"
     t.string  "entertainment"
     t.string  "dog"
     t.string  "food"
-    t.string  "chill"
-    t.string  "happy_hour"
+    t.string  "bar"
+    t.integer "price_range"
     t.integer "ig_rating"
   end
 
