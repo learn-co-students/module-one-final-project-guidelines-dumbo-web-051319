@@ -1,10 +1,10 @@
-# require "FileUtils"
 require 'catpix'
 class Utility
   #Login
   def self.login
     account_id = $prompt.ask('Account ID:', default: ENV['ACCOUNT_ID'])
     password = $prompt.mask("Password:")
+    clear_page
     user = Account.find_by(id: account_id)
     if user == nil || user.password != password
       puts "Wrong Account ID or Password, please try again"
@@ -41,16 +41,21 @@ class Utility
     ary =  Dir["/Users/fanqiangmeng/Downloads/Picture_Sample/*.jpg"]
     pictures = ary.map {|ele| File.basename(ele)}
     choice = $prompt.select("Pick one Picture", pictures)
+    clear_page
     src_dir = "/Users/fanqiangmeng/Downloads/Picture_Sample/#{choice}"
     choice2 = $prompt.select("Pick one Picture", %w(Upload Preview Back))
     if choice2 == "Upload"
       self.upload_picture(src_dir, user, content)
     elsif choice2 == "Preview"
       self.view_picture(src_dir)
-      choice3 = $prompt.select("Pick one Picture", %w(Back))
-      self.pick_picture
+      choice3 = $prompt.select("Pick one Picture", %w(Upload Back))
+      if choice3 == "Back"
+        self.pick_picture(user, content)
+      elsif choice3 == "Upload"
+        self.upload_picture(src_dir, user, content)
+      end
     else
-      self.pick_picture
+      self.pick_picture(user, content)
     end
     src_dir
   end
@@ -61,32 +66,118 @@ class Utility
     :limit_y => 0,
     :center_x => true,
     :center_y => true,
-    :bg => "white",
+    :bg => "black",
     :bg_fill => true,
     :resolution => "high"
   end
-  #Show Posts and user can select
-  def self.show_posts(post_ary)
-    # post_ary = ["'First Post with Picture (may be)' 'Fanqiang Meng' 6", "'Ok i am good' 'Fanqiang Meng' 5"]
+  #Show Posts and user can select one to display
+  def self.show_posts(user, users)
+    puts "----------------------------------------------------------------------"
     puts "Posts"
+    post_ary = users.map {|user| AllPosts.arry_of_posts(user)}
     post = $prompt.select("", post_ary)
+    clear_page
+    get_post_id(post)
     desplay_post(post)
-    choice = $prompt.select("", %w(Back Exit))
+    post_options(post, post_ary, user, users)
+  end
+  #follow Show_posts, give options after display_post.
+  def self.post_options(post, post_ary, user, users)
+    choice = $prompt.select("Options:", Authentication.give_options(user, post))
     if choice == "Back"
-      show_posts(post_ary)
+      clear_page
+      show_posts(user, users)
+    elsif choice == "Back_to_top"
+      clear_page
+      UserUI.master(user)
+    elsif choice == "Comment"
+      create_comment(post, user, post_ary, users)
+    elsif choice == "Like"
+      create_like(post, user, post_ary, users)
+    elsif choice == "Edit"
+      edit_post(post)
+    elsif choice == "Delete"
+      UserUI.master(user)
     else
-      puts "See ya~~~~"
+      clear_page
+      Welcome.welcome_to_igl
     end
   end
   #Display the Post with picture
   def self.desplay_post(post)
-    post_id = post.split(" ")[-1].to_i
+    post_id = post.split(" ")[1].to_i
+    comments_count = Comment.where("post_id == ?", post_id).count
+    likes_count = Like.where("post_id == ?", post_id).count
     post_info = Post.find_by(id: post_id)
+    puts "----------------------------------------------------------------------"
     puts "#{Account.find_by(id: post_info.account_id).name}"
-    # binding.pry
+    puts "----------------------------------------------------------------------"
     view_picture(post_info.picture_path)
     puts "#{post_info.content}"
+    comments = Comment.where("post_id == ?", post_id)
+    puts "----------------------------------------------------------------------"
+    puts "Comments (#{comments_count}) | Likes #{likes_count})"
+    puts " "
+    if comments.length != 0
+      comments.each do |comment|
+        puts "#{Account.find_by(id: comment.account_id).name}"
+        puts "#{comment.comment}"
+        puts ""
+      end
+    else
+      puts "No comments."
+      puts ""
+    end
+  end
+  #create comment
+  def self.create_comment(post, user, post_ary, users)
+    post_id = post.split(" ")[1].to_i
+    comment = $prompt.ask("Comment: ")
+    Comment.create(comment: comment, account_id: user.id, post_id: post_id)
+    desplay_post(post)
+    post_options(post, post_ary, user, users)
+  end
+  def self.create_like(post, user, post_ary, users)
+    post_id = post.split(" ")[1].to_i
+    likes = Like.where("post_id == ?", post_id)
+    if likes.empty?
+        user.likes.create(post_id: post_id)
+        desplay_post(post)
+        post_options(post, post_ary, user, users)
+    else
+      for i in 0...likes.length
+        counter = 0
+        likes.each do |like|
+          if like.account_id == user.id
+            counter += 1
+          end
+        end
+        if counter == 0
+          user.likes.create(post_id: post_id)
+          desplay_post(post)
+          post_options(post, post_ary, user, users)
+        else
+          puts "You already liked the post"
+          post_options(post, post_ary, user, users)
+        end
+      end
+    end
+  end
+
+  def self.clear_page
+    system "clear" or system "cls"
+  end
+
+  def get_post_id (post)
+    post_id = post.split(" ")[1].to_i
+  end
+
+  def edit_post(post)
+    post_id = get_post_id(post)
+    current_post = Post.find_by(id: post_id)
+    edit = $prompt.ask("Edit Post: ")
+    current_post.content = edit
+    current_post.save
+    desplay_post(post)
   end
 end
-
-  #fahdflekajfdlasf

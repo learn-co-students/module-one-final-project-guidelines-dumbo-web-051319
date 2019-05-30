@@ -1,8 +1,10 @@
 require 'bundler'
 require 'active_record'
 require 'io/console'
+require "artii"
 
 Bundler.require
+ActiveRecord::Base.logger = nil
 
 ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: 'db/development.db')
 
