@@ -18,7 +18,6 @@ class UserUI
   end
 
   def self.my_post(user)
-    posts = AllPosts.arry_of_posts(user)
-    Utility.show_posts(posts, user)
+    Utility.show_posts(user)
   end
 end

@@ -65,13 +65,15 @@ class Utility
     :limit_y => 0,
     :center_x => true,
     :center_y => true,
-    :bg => "white",
+    :bg => "black",
     :bg_fill => true,
     :resolution => "high"
   end
   #Show Posts and user can select one to display
-  def self.show_posts(post_ary, user)
+  def self.show_posts(user)
+    puts "----------------------------------------------------------------------"
     puts "Posts"
+    post_ary = AllPosts.arry_of_posts(user)
     post = $prompt.select("", post_ary)
     post_options(post, post_ary, user)
   end
@@ -79,7 +81,7 @@ class Utility
     desplay_post(post)
     choice = $prompt.select("Options:", %w(Comment Back Back_to_top Logout))
     if choice == "Back"
-      show_posts(post_ary, user)
+      show_posts(user)
     elsif choice == "Back_to_top"
       UserUI.master(user)
     elsif choice == "Comment"
@@ -91,23 +93,30 @@ class Utility
   #Display the Post with picture
   def self.desplay_post(post)
     post_id = post.split(" ")[1].to_i
+    post_count = Comment.where("post_id == ?", post_id).count
     post_info = Post.find_by(id: post_id)
+    puts "----------------------------------------------------------------------"
     puts "#{Account.find_by(id: post_info.account_id).name}"
+    puts "----------------------------------------------------------------------"
     view_picture(post_info.picture_path)
     puts "#{post_info.content}"
     comments = Comment.where("post_id == ?", post_id)
+    puts "----------------------------------------------------------------------"
+    puts "Comments (#{post_count})"
+    puts " "
     if comments.length != 0
-      puts "Comments"
-      puts " "
       comments.each do |comment|
         puts "#{Account.find_by(id: comment.account_id).name}"
         puts "#{comment.comment}"
         puts ""
       end
+    else
+      puts "No comments."
+      puts ""
     end
   end
   def self.create_comment(post, user, post_ary)
-    post_id = post.split(" ")[0].to_i
+    post_id = post.split(" ")[1].to_i
     comment = $prompt.ask('Comment: ')
     Comment.create(comment: comment, account_id: user.id, post_id: post_id)
     post_options(post, post_ary, user)
