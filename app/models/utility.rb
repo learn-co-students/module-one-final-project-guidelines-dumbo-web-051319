@@ -5,6 +5,7 @@ class Utility
   def self.login
     account_id = $prompt.ask('Account ID:', default: ENV['ACCOUNT_ID'])
     password = $prompt.mask("Password:")
+    clear_page
     user = Account.find_by(id: account_id)
     if user == nil || user.password != password
       puts "Wrong Account ID or Password, please try again"
@@ -41,6 +42,7 @@ class Utility
     ary =  Dir["/Users/fanqiangmeng/Downloads/Picture_Sample/*.jpg"]
     pictures = ary.map {|ele| File.basename(ele)}
     choice = $prompt.select("Pick one Picture", pictures)
+    clear_page
     src_dir = "/Users/fanqiangmeng/Downloads/Picture_Sample/#{choice}"
     choice2 = $prompt.select("Pick one Picture", %w(Upload Preview Back))
     if choice2 == "Upload"
@@ -76,6 +78,7 @@ class Utility
     puts "Posts"
     post_ary = users.map {|user| AllPosts.arry_of_posts(user)}
     post = $prompt.select("", post_ary)
+    clear_page
     desplay_post(post)
     post_options(post, post_ary, user, users)
   end
@@ -83,14 +86,17 @@ class Utility
   def self.post_options(post, post_ary, user, users)
     choice = $prompt.select("Options:", %w(Like Comment Back Back_to_top Logout))
     if choice == "Back"
+      clear_page
       show_posts(user, users)
     elsif choice == "Back_to_top"
+      clear_page
       UserUI.master(user)
     elsif choice == "Comment"
       create_comment(post, user, post_ary, users)
     elsif choice == "Like"
       create_like(post, user, post_ary, users)
     else
+      clear_page
       Welcome.welcome_to_igl
     end
   end
@@ -153,6 +159,9 @@ class Utility
         end
       end
     end
+  end
+  def self.clear_page
+    system "clear" or system "cls"
   end
 end
 

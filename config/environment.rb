@@ -1,6 +1,7 @@
 require 'bundler'
 require 'active_record'
 require 'io/console'
+require "artii"
 
 Bundler.require
 ActiveRecord::Base.logger = nil
