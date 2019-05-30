@@ -53,7 +53,9 @@ while user == nil
          if user
            # add progress bar #
           sleep(2)
+          puts "--------------------------------"
           puts "Welcome back #{user.name}!"
+          puts "--------------------------------"
         else
           sleep(2)
           puts "Oh no, looks like we didn't find you...please try again"
@@ -86,7 +88,7 @@ while menu_choice != "Log-Out?"
       doc_hospital = prompt.ask("Where were you treated?")
 
       doc = Doctor.create(name: doc_name, specialty: doc_specialty, hospital: doc_hospital)
-      new_record1 = Record.create(illness: record_illness, description: record_description, cured?: false)
+      new_record1 = Record.create(illness: record_illness, description: record_description, cured: false)
 
       user.records << new_record1
       doc.records << new_record1
@@ -95,12 +97,17 @@ while menu_choice != "Log-Out?"
       sleep(1)
       puts "--------------------------------"
       puts "Illness: #{new_record1.illness}"
+      if new_record1.cured == false
+        puts "Cured?: Not Cured"
+      else
+        puts "Cured?: Cured"
+      end
       puts "Description: #{new_record1.description}"
       puts "Doctor: #{doc.name}"
       puts "Hospital: #{doc.hospital}"
       puts "Date: #{new_record1.created_at}"
       puts "--------------------------------"
-      sleep(6)
+      sleep(3)
 
     ###### MY RECORDS ######
     elsif menu_choice == "My-Records"
@@ -114,6 +121,11 @@ while menu_choice != "Log-Out?"
           user.records.map do |x|
             puts "----------"
             puts "Illness: #{x.illness}"
+            if x.cured == false
+              puts "Cured?: Not Cured"
+            else
+              puts "Cured?: Cured"
+            end
             puts "Description: #{x.description}"
             puts "Doctor: #{x.doctor.name}"
             puts "Hospital: #{x.doctor.hospital}"
@@ -134,6 +146,11 @@ while menu_choice != "Log-Out?"
         elsif record_choice == "Recent-Record"
           my_last = user.records.last
           puts "Illness: #{my_last.illness}"
+          if my_last.cured == false
+            puts "Cured?: Not Cured"
+          else
+            puts "Cured?: Cured"
+          end
           puts "Description: #{my_last.description}"
           puts "Doctor: #{my_last.doctor.name}"
           puts "Hospital: #{my_last.doctor.hospital}"
@@ -143,6 +160,27 @@ while menu_choice != "Log-Out?"
           my_hospitals.each_with_index {|hospital, index| puts "#{index + 1}. #{hospital}"}
         end #(belongs to My Record option choices)#
 
+      ##### UPDATE RECORD ######## 
+      elsif menu_choice == "Update-Records"
+        if user.records.empty?
+          puts "Hmm...looks like you have no records"
+        else
+          my_illnesses = user.records.map {|x| "#{x.id}: #{x.illness}"}
+          illness_choice = prompt.select("records", my_illnesses)
+          update_id = illness_choice.split(":")
+          illness_instance = update_id[0]
+          update_instance = user.records.find_by_id(illness_instance)
+          # binding.pry
+          update_instance.update(cured: true)
+          user.reload
+          # binding.pry
+          # user.records.find_by_id(update_instance.id).save
+
+          # update_instance.update
+        end
+
+        
+        
       ###### DELETE RECORDS ######
       elsif menu_choice == "Delete-Records"
         delete_choice = prompt.select("Do you want to delete a single record or all records?", %w(Single-Record? All-Records?))
@@ -153,22 +191,20 @@ while menu_choice != "Log-Out?"
           # binding.pry
           user.records.destroy_all if answer == true
           puts "Phew..." if answer == false
-        end
-
+        
         ###### DELETE RECORDS -> SINGLE RECORD? ######
-        if delete_choice == "Single-Record?"
-          my_illnesses = user.records.map {|x| "#{x.id}: #{x.illness}"}
-          illness_choice = prompt.select("records", my_illnesses)
-          delete_id = illness_choice.split(":")
-          illness_instance = user.records.find_by delete_id[0]
-          binding.pry
-          illness_instance.destroy
-          # new_hash = {}
-          # my_illnesses.each do |ill|
-          #   new_hash[ill] = 0
-          # end
-          # binding.pry
-        end #(belongs to Delete Records menu choices)#
+        else delete_choice == "Single-Record?"
+          if user.records.empty?
+            puts "Hmm...looks like you have no records"
+          else
+            my_illnesses = user.records.map {|x| "#{x.id}: #{x.illness}"}
+            illness_choice = prompt.select("records", my_illnesses)
+            delete_id = illness_choice.split(":")
+            illness_instance = delete_id[0]
+            user.records.find_by_id(illness_instance).delete
+            user.reload
+          end
+      end #(belongs to Delete Records menu choices)#
 
       ###### LOG OUT? ######
       else menu_choice == "Log-Out?"
