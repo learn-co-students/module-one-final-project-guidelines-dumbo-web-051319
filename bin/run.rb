@@ -1,13 +1,27 @@
 require_relative '../config/environment'
 require 'pry'
 
-prompt = TTY::Prompt.new(active_color: :yellow, enable_color: true)
+prompt = TTY::Prompt.new(active_color: :yellow)
 
 
 ###### GREETING/LOGIN ######
 user = nil
 while user == nil
+  puts "
+                ___  __     __               ___  __        __        ___  __
+          |\\/| |__  |  \\ | /  `  /\\  |        |  |__)  /\\  /  ` |__/ |__  |__)
+          |  | |___ |__/ | \\__, /~~\\ |___     |  |  \\ /~~\\ \\__, |  \\ |___ |  \\
 
+                                        🏥 🏥 🏥
+
+                                ,.........   .........,
+                           ,..,'          '.'          ',..,
+                         ,' ,'             :             ', ',
+                        ,' ,'              :              ', ',
+                       ,' ,'............., : ,.............', ',
+                      ,'  '............   '.'   ............'  ',
+                       '''''''''''''''''';''';''''''''''''''''''
+                                          '''"
   sleep(1.5)
   choice = prompt.select("Hello, welcome to Medical Tracker", %w(Sign-Up Sign-In Quit?))
 
