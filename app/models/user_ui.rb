@@ -20,9 +20,5 @@ class UserUI
   def self.my_post(user)
     posts = AllPosts.arry_of_posts(user)
     Utility.show_posts(posts, user)
-  #   posts = Post.where(account_id: user.id)
-  #   posts.each do |post|
-  #     puts post.content
-  #   end
   end
 end

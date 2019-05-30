@@ -47,10 +47,14 @@ class Utility
       self.upload_picture(src_dir, user, content)
     elsif choice2 == "Preview"
       self.view_picture(src_dir)
-      choice3 = $prompt.select("Pick one Picture", %w(Back))
-      self.pick_picture
+      choice3 = $prompt.select("Pick one Picture", %w(Upload Back))
+      if choice3 == "Back"
+        self.pick_picture(user, content)
+      elsif choice3 == "Upload"
+        self.upload_picture(src_dir, user, content)
+      end
     else
-      self.pick_picture
+      self.pick_picture(user, content)
     end
     src_dir
   end
@@ -65,29 +69,48 @@ class Utility
     :bg_fill => true,
     :resolution => "high"
   end
-  #Show Posts and user can select
+  #Show Posts and user can select one to display
   def self.show_posts(post_ary, user)
-    # post_ary = ["'First Post with Picture (may be)' 'Fanqiang Meng' 6", "'Ok i am good' 'Fanqiang Meng' 5"]
     puts "Posts"
     post = $prompt.select("", post_ary)
+    post_options(post, post_ary, user)
+  end
+  def self.post_options(post, post_ary, user)
     desplay_post(post)
-    choice = $prompt.select("", %w(Back Back_to_top Exit))
+    choice = $prompt.select("", %w(Comment Back Back_to_top Exit))
     if choice == "Back"
-      show_posts(post_ary)
+      show_posts(post_ary, user)
     elsif choice == "Back_to_top"
       UserUI.master(user)
+    elsif choice == "Comment"
+      create_comment(post, user, post_ary)
     else
       puts "See ya~~~~"
     end
   end
   #Display the Post with picture
   def self.desplay_post(post)
-    post_id = post.split(" ")[-1].to_i
+    post_id = post.split(" ")[1].to_i
     post_info = Post.find_by(id: post_id)
     puts "#{Account.find_by(id: post_info.account_id).name}"
-    # binding.pry
     view_picture(post_info.picture_path)
     puts "#{post_info.content}"
+    comments = Comment.where("post_id == ?", post_id)
+    if comments.length != 0
+      puts "Comments"
+      puts " "
+      comments.each do |comment|
+        puts "#{Account.find_by(id: comment.account_id).name}"
+        puts "#{comment.comment}"
+        puts ""
+      end
+    end
+  end
+  def self.create_comment(post, user, post_ary)
+    post_id = post.split(" ")[0].to_i
+    comment = $prompt.ask('Comment: ')
+    Comment.create(comment: comment, account_id: user.id, post_id: post_id)
+    post_options(post, post_ary, user)
   end
 end
 

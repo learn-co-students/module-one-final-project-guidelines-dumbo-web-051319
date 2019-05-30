@@ -9,14 +9,13 @@ class AllPosts
   def self.get_post_content(id, i)
     Account.find_by(id: id).posts[i].content
   end
-  def self.get_post_together(id, i)
-    content = get_post_content(id, i)
-    post_id = get_post_id(id, i)
-    "#{content} #{post_id}"
-  end
+  # def self.get_post_together(id, i)
+  #   content = get_post_content(id, i)
+  #   post_id = get_post_id(id, i)
+  #   "#{content} #{post_id}"
+  # end
   def self.get_together(id, i)
-    name = get_account_name(id)
-    "#{name} #{get_post_together(id, i)}"
+    "Post_id: #{get_post_id(id, i)} Author: #{get_account_name(id)} #{get_post_content(id, i)}"
   end
   def self.arry_of_posts(user)
     id = user.id

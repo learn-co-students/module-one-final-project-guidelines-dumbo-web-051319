@@ -10,11 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 5) do
+ActiveRecord::Schema.define(version: 6) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "name"
     t.string "password"
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.text "comment"
+    t.integer "post_id"
+    t.integer "account_id"
   end
 
   create_table "likes", force: :cascade do |t|
