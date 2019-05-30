@@ -1,4 +1,3 @@
-# require "FileUtils"
 require 'catpix'
 class Utility
   #Login
@@ -73,18 +72,18 @@ class Utility
   end
   #Show Posts and user can select one to display
   def self.show_posts(user, users)
-
     puts "----------------------------------------------------------------------"
     puts "Posts"
     post_ary = users.map {|user| AllPosts.arry_of_posts(user)}
     post = $prompt.select("", post_ary)
     clear_page
+    get_post_id(post)
     desplay_post(post)
     post_options(post, post_ary, user, users)
   end
   #follow Show_posts, give options after display_post.
   def self.post_options(post, post_ary, user, users)
-    choice = $prompt.select("Options:", %w(Like Comment Back Back_to_top Logout))
+    choice = $prompt.select("Options:", Authentication.give_options(user, post))
     if choice == "Back"
       clear_page
       show_posts(user, users)
@@ -95,6 +94,10 @@ class Utility
       create_comment(post, user, post_ary, users)
     elsif choice == "Like"
       create_like(post, user, post_ary, users)
+    elsif choice == "Edit"
+      edit_post(post)
+    elsif choice == "Delete"
+      UserUI.master(user)
     else
       clear_page
       Welcome.welcome_to_igl
@@ -160,15 +163,21 @@ class Utility
       end
     end
   end
+
   def self.clear_page
     system "clear" or system "cls"
   end
-end
 
-  #fahdflekajfdlasf
-  #   puts "You already liked the post"
-  #   post_options(post, post_ary, user, users)
-  # else
-  #   user.likes.create(post_id: post_id)
-  #   desplay_post(post)
-  #   post_options(post, post_ary, user, users)
+  def get_post_id (post)
+    post_id = post.split(" ")[1].to_i
+  end
+
+  def edit_post(post)
+    post_id = get_post_id(post)
+    current_post = Post.find_by(id: post_id)
+    edit = $prompt.ask("Edit Post: ")
+    current_post.content = edit
+    current_post.save
+    desplay_post(post)
+  end
+end
