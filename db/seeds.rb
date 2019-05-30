@@ -1,0 +1,6 @@
+user1 = Account.create(name: "Fan", password: "Fan1")
+user2 = Account.create(name: "Tan", password: "Tan1")
+user3 = Account.create(name: "Rachel", password: "Rachel1")
+user4 = Account.create(name: "Otha", password: "Otha1")
+user5 = Account.create(name: "Tom", password: "Tom1")
+user6 = Account.create(name: "Tim", password: "Tim1")
