@@ -109,12 +109,17 @@ while menu_choice != "Log-Out?"
           puts "Phew..." if answer == false
         end
         if delete_choice == "Single-Record?"
-          my_illnesses = user.records.map {|x| x.illness}
-          new_hash = {}
-          my_illnesses.each do |ill|
-            new_hash[ill] = 0
-          end
+          my_illnesses = user.records.map {|x| "#{x.id}: #{x.illness}"}
+          illness_choice = prompt.select("records", my_illnesses)
+          delete_id = illness_choice.split(":")
+          illness_instance = user.records.find_by delete_id[0]
           binding.pry
+          illness_instance.destroy
+          # new_hash = {}
+          # my_illnesses.each do |ill|
+          #   new_hash[ill] = 0
+          # end
+          # binding.pry
         end
 
       end
