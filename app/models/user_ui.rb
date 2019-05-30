@@ -1,12 +1,12 @@
 class UserUI
   def self.master(user)
-     choice = $prompt.select("Options:", %w(Create_Posts My_Post All_Post Logout))
+     choice = $prompt.select("Options:", %w(Create_Posts My_Post All_Posts Logout))
      if choice == "Create_Posts"
        self.create_post(user)
      elsif choice == 'My_Post'
        self.my_post(user)
-     elsif choice == 'ALl_Post'
-       puts "all posts"
+     elsif choice == 'All_Posts'
+       self.all_posts(user)
      else
        Welcome.welcome_to_igl
      end
@@ -18,6 +18,14 @@ class UserUI
   end
 
   def self.my_post(user)
-    Utility.show_posts(user)
+    users = []
+    users << user
+    Utility.show_posts(user, users)
+  end
+
+  def self.all_posts(user)
+    users = []
+    users = Account.all
+    Utility.show_posts(user, users)
   end
 end

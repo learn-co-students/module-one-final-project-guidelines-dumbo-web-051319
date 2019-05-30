@@ -70,22 +70,26 @@ class Utility
     :resolution => "high"
   end
   #Show Posts and user can select one to display
-  def self.show_posts(user)
+  def self.show_posts(user, users)
+
     puts "----------------------------------------------------------------------"
     puts "Posts"
-    post_ary = AllPosts.arry_of_posts(user)
+    post_ary = users.map {|user| AllPosts.arry_of_posts(user)}
     post = $prompt.select("", post_ary)
-    post_options(post, post_ary, user)
-  end
-  def self.post_options(post, post_ary, user)
     desplay_post(post)
-    choice = $prompt.select("Options:", %w(Comment Back Back_to_top Logout))
+    post_options(post, post_ary, user, users)
+  end
+  #follow Show_posts, give options after display_post.
+  def self.post_options(post, post_ary, user, users)
+    choice = $prompt.select("Options:", %w(Like Comment Back Back_to_top Logout))
     if choice == "Back"
-      show_posts(user)
+      show_posts(user, users)
     elsif choice == "Back_to_top"
       UserUI.master(user)
     elsif choice == "Comment"
-      create_comment(post, user, post_ary)
+      create_comment(post, user, post_ary, users)
+    elsif choice == "Like"
+      create_like(post, user, post_ary, users)
     else
       Welcome.welcome_to_igl
     end
@@ -93,7 +97,8 @@ class Utility
   #Display the Post with picture
   def self.desplay_post(post)
     post_id = post.split(" ")[1].to_i
-    post_count = Comment.where("post_id == ?", post_id).count
+    comments_count = Comment.where("post_id == ?", post_id).count
+    likes_count = Like.where("post_id == ?", post_id).count
     post_info = Post.find_by(id: post_id)
     puts "----------------------------------------------------------------------"
     puts "#{Account.find_by(id: post_info.account_id).name}"
@@ -102,7 +107,7 @@ class Utility
     puts "#{post_info.content}"
     comments = Comment.where("post_id == ?", post_id)
     puts "----------------------------------------------------------------------"
-    puts "Comments (#{post_count})"
+    puts "Comments (#{comments_count}) | Likes #{likes_count})"
     puts " "
     if comments.length != 0
       comments.each do |comment|
@@ -115,12 +120,46 @@ class Utility
       puts ""
     end
   end
-  def self.create_comment(post, user, post_ary)
+  #create comment
+  def self.create_comment(post, user, post_ary, users)
     post_id = post.split(" ")[1].to_i
-    comment = $prompt.ask('Comment: ')
+    comment = $prompt.ask("Comment: ")
     Comment.create(comment: comment, account_id: user.id, post_id: post_id)
-    post_options(post, post_ary, user)
+    desplay_post(post)
+    post_options(post, post_ary, user, users)
+  end
+  def self.create_like(post, user, post_ary, users)
+    post_id = post.split(" ")[1].to_i
+    likes = Like.where("post_id == ?", post_id)
+    if likes.empty?
+        user.likes.create(post_id: post_id)
+        desplay_post(post)
+        post_options(post, post_ary, user, users)
+    else
+      for i in 0...likes.length
+        counter = 0
+        likes.each do |like|
+          if like.account_id == user.id
+            counter += 1
+          end
+        end
+        if counter == 0
+          user.likes.create(post_id: post_id)
+          desplay_post(post)
+          post_options(post, post_ary, user, users)
+        else
+          puts "You already liked the post"
+          post_options(post, post_ary, user, users)
+        end
+      end
+    end
   end
 end
 
   #fahdflekajfdlasf
+  #   puts "You already liked the post"
+  #   post_options(post, post_ary, user, users)
+  # else
+  #   user.likes.create(post_id: post_id)
+  #   desplay_post(post)
+  #   post_options(post, post_ary, user, users)
