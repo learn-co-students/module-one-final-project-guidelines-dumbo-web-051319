@@ -20,12 +20,24 @@ class UserUI
   def self.my_post(user)
     users = []
     users << user
-    Utility.show_posts(user, users)
+    if Post.where("account_id == ?", user.id).length == 0
+      puts "You have no post yet, please create one."
+      Utility.clear_page
+      master(user)
+    else
+      Utility.show_posts(user, users)
+    end
   end
 
   def self.all_posts(user)
     users = []
     users = Account.all
-    Utility.show_posts(user, users)
+    if Post.all.length == 0
+      puts "There are no posts, please create one."
+      Utility.clear_page
+      master(user)
+    else
+      Utility.show_posts(user, users)
+    end
   end
 end

@@ -22,6 +22,9 @@ class Utility
     new_account = Account.where("name == ?", name)[-1]
     puts "Here is you Account ID #{new_account.id}"
   end
+
+
+
   #Upload Picture
   def self.upload_picture(src_dir, user, content)
     # src_dir = self.pick_picture
@@ -36,6 +39,9 @@ class Utility
       puts "Sorry, We can't find it."
     end
   end
+
+
+
   #Select a Picture, User can Preview and Upload
   def self.pick_picture(user, content)
     ary =  Dir["/Users/fanqiangmeng/Downloads/Picture_Sample/*.jpg"]
@@ -59,6 +65,9 @@ class Utility
     end
     src_dir
   end
+
+
+
   #Display a Picture
   def self.view_picture(src_dir)
     Catpix::print_image src_dir,
@@ -70,6 +79,9 @@ class Utility
     :bg_fill => true,
     :resolution => "high"
   end
+
+
+
   #Show Posts and user can select one to display
   def self.show_posts(user, users)
     puts "----------------------------------------------------------------------"
@@ -81,6 +93,9 @@ class Utility
     desplay_post(post)
     post_options(post, post_ary, user, users)
   end
+
+
+
   #follow Show_posts, give options after display_post.
   def self.post_options(post, post_ary, user, users)
     choice = $prompt.select("Options:", Authentication.give_options(user, post))
@@ -97,12 +112,15 @@ class Utility
     elsif choice == "Edit"
       edit_post(post)
     elsif choice == "Delete"
-      UserUI.master(user)
+      delete_post(user, users, post)
     else
       clear_page
       Welcome.welcome_to_igl
     end
   end
+
+
+
   #Display the Post with picture
   def self.desplay_post(post)
     post_id = post.split(" ")[1].to_i
@@ -116,7 +134,7 @@ class Utility
     puts "#{post_info.content}"
     comments = Comment.where("post_id == ?", post_id)
     puts "----------------------------------------------------------------------"
-    puts "Comments (#{comments_count}) | Likes #{likes_count})"
+    puts "Comments (#{comments_count}) | Likes (#{likes_count})"
     puts " "
     if comments.length != 0
       comments.each do |comment|
@@ -129,6 +147,9 @@ class Utility
       puts ""
     end
   end
+
+
+
   #create comment
   def self.create_comment(post, user, post_ary, users)
     post_id = post.split(" ")[1].to_i
@@ -137,6 +158,9 @@ class Utility
     desplay_post(post)
     post_options(post, post_ary, user, users)
   end
+
+
+
   def self.create_like(post, user, post_ary, users)
     post_id = post.split(" ")[1].to_i
     likes = Like.where("post_id == ?", post_id)
@@ -164,20 +188,35 @@ class Utility
     end
   end
 
+
+
   def self.clear_page
     system "clear" or system "cls"
   end
 
-  def get_post_id (post)
+
+
+  def self.get_post_id (post)
     post_id = post.split(" ")[1].to_i
   end
 
-  def edit_post(post)
+
+
+  def self.edit_post(post)
     post_id = get_post_id(post)
     current_post = Post.find_by(id: post_id)
     edit = $prompt.ask("Edit Post: ")
     current_post.content = edit
     current_post.save
     desplay_post(post)
+  end
+
+
+  def self.delete_post(user, users, post)
+    post_id = get_post_id(post)
+    Post.destroy(post_id)
+    Comment.where("post_id == ?", post_id).destroy_all
+    Like.where("post_id == ?", post_id).destroy_all
+    show_posts(user, users)
   end
 end
