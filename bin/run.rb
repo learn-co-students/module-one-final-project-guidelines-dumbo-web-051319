@@ -159,18 +159,6 @@ while menu_choice != "Log-Out?"
       record_choice = prompt.select("What would you like to view?", %w(All-Records Doctors Hospitals Recent-Record Back-to-Menu))
         ###### MY RECORDS -> ALL RECORDS ######
         if record_choice == "All-Records"
-          # if user.records.empty?
-          #     # add progress bar #
-          #     sleep(0.5)
-          #     spinner.auto_spin
-          #     sleep(3)
-          #     spinner.error("(Records Not Found)")
-          #     sleep(2)
-          #     # end progress bar #
-          #   puts "Hmm...looks like you have no records"
-          #   sleep(2)
-          # end
-            # add progress bar#
             sleep(0.5)
             spinner.auto_spin
             sleep(3)
@@ -194,16 +182,6 @@ while menu_choice != "Log-Out?"
 
         ###### MY RECORDS -> DOCTORS ######
         elsif record_choice == "Doctors"
-          # if user.records.empty?
-          #     # add progress bar #
-          #     sleep(0.5)
-          #     spinner.auto_spin
-          #     sleep(3)
-          #     spinner.error("(Records Not Found)")
-          #     sleep(2)
-          #     # end progress bar #
-          #   puts "Hmm...looks like you have no doctors"
-          # end
             # add progress bar#
             sleep(0.5)
             spinner.auto_spin
@@ -219,17 +197,6 @@ while menu_choice != "Log-Out?"
 
         ###### MY RECORDS -> RECENT RECORD ######
         elsif record_choice == "Recent-Record"
-          # if user.records.empty?
-          #   # add progress bar #
-          #   sleep(0.5)
-          #   spinner.auto_spin
-          #   sleep(3)
-          #   spinner.error("(Record Not Found)")
-          #   sleep(2)
-          #   # end progress bar #
-          #   puts "Hmm...looks like you have no records"
-          # end
-            # add progress bar#
             sleep(0.5)
             spinner.auto_spin
             sleep(3)
@@ -251,17 +218,6 @@ while menu_choice != "Log-Out?"
           puts "--------------------------------"
           sleep(2)
         elsif record_choice == "Hospitals"
-          # if user.records.empty?
-          #   # add progress bar #
-          #   sleep(0.5)
-          #   spinner.auto_spin
-          #   sleep(3)
-          #   spinner.error("(Record Not Found)")
-          #   sleep(2)
-          #   # end progress bar #
-          #   puts "Hmm...looks like you have no records"
-          # end
-            # add progress bar#
             sleep(0.5)
             spinner.auto_spin
             sleep(3)
@@ -303,7 +259,7 @@ while menu_choice != "Log-Out?"
             sleep(2)
           end
           update_choice = prompt.select("What would you like to update about this record?", %w(Cure-Status Illness Description Back-to-Menu))
-            ##### UPDATE RECORD -> CURED? ########
+            ##### UPDATE RECORD -> CURE STATUS ########
             if update_choice == "Cure-Status"
               # add progress bar #
               sleep(0.5)
@@ -322,14 +278,13 @@ while menu_choice != "Log-Out?"
                 puts "Great! Your status have been updated"
                 puts "--------------------------------"
 
-            ##### UPDATE RECORD -> CURED? ########
+            ##### UPDATE RECORD -> RECORD NAME ########
             elsif update_choice == "Illness"
               sleep(2)
               update_illness = prompt.ask("Please give your illness a new name.")
                 update_id = illness_choice.split(":")
                 illness_instance = update_id[0]
                 update_instance = user.records.find_by_id(illness_instance)
-                # binding.pry
                 update_instance.update(illness: update_illness)
                 user.reload
                   # add progress bar #
@@ -347,12 +302,9 @@ while menu_choice != "Log-Out?"
             elsif update_choice == "Description"
               sleep(2)
               update_description = prompt.ask("Please rewrite your symptoms for this record")
-                # my_illnesses = user.records.map {|x| "#{x.id}: #{x.illness}"}
-                # illness_choice = prompt.select("records", my_illnesses)
                 update_id = illness_choice.split(":")
                 illness_instance = update_id[0]
                 update_instance = user.records.find_by_id(illness_instance)
-                # binding.pry
                 update_instance.update(description: update_description)
                 user.reload
                   sleep(0.5)
