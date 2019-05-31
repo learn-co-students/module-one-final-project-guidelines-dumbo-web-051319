@@ -10,10 +10,15 @@ class Utility
       puts "Wrong Account ID or Password, please try again"
       login
     elsif user.password == password
-      puts "Welcome back #{user.name}"
+      welcome_back = Artii::Base.new :font => "slant"
+      puts welcome_back.asciify("Welcome back")
       UserUI.master(user)
     end
   end
+
+
+
+
   #Sign Up
   def self.sign_up
     name = $prompt.ask('What is your name?', default: ENV['New User'])
@@ -30,10 +35,11 @@ class Utility
     # src_dir = self.pick_picture
     dst_dir = "/Users/fanqiangmeng/Development/ActiveRecord/module-one-final-project-guidelines-dumbo-web-051319/picture"
     if File.exist? (src_dir)
-      puts "Uploading: #{File.basename(src_dir)}"
+      puts "Uploading #{File.basename(src_dir)}....."
       sleep(rand(5))
       FileUtils.cp(src_dir, dst_dir)
       Post.create(account_id: user.id, content: content, picture_path: dst_dir + "/#{File.basename(src_dir)}")
+      puts "Done"
       UserUI.master(user)
     else
       puts "Sorry, We can't find it."
@@ -63,7 +69,7 @@ class Utility
     else
       self.pick_picture(user, content)
     end
-    src_dir
+    # src_dir
   end
 
 
@@ -84,14 +90,22 @@ class Utility
 
   #Show Posts and user can select one to display
   def self.show_posts(user, users)
-    puts "----------------------------------------------------------------------"
-    puts "Posts"
+    post_menu = Artii::Base.new :font => "slant"
+    puts post_menu.asciify("Posts")
     post_ary = users.map {|user| AllPosts.arry_of_posts(user)}
-    post = $prompt.select("", post_ary)
-    clear_page
-    get_post_id(post)
-    desplay_post(post)
-    post_options(post, post_ary, user, users)
+    if post_ary == [[]]
+      puts "We can't get any post for you, please create one."
+      puts "Returnning to Main Menu"
+      sleep(2)
+      Utility.clear_page
+      UserUI.master(user)
+    else
+      post = $prompt.select("", post_ary)
+      clear_page
+      get_post_id(post)
+      desplay_post(post)
+      post_options(post, post_ary, user, users)
+    end
   end
 
 
@@ -108,9 +122,10 @@ class Utility
     elsif choice == "Comment"
       create_comment(post, user, post_ary, users)
     elsif choice == "Like"
+      clear_page
       create_like(post, user, post_ary, users)
     elsif choice == "Edit"
-      edit_post(post)
+      edit_post(post, post_ary, user, users)
     elsif choice == "Delete"
       delete_post(user, users, post)
     else
@@ -123,7 +138,7 @@ class Utility
 
   #Display the Post with picture
   def self.desplay_post(post)
-    post_id = post.split(" ")[1].to_i
+    post_id = get_post_id (post)
     comments_count = Comment.where("post_id == ?", post_id).count
     likes_count = Like.where("post_id == ?", post_id).count
     post_info = Post.find_by(id: post_id)
@@ -153,7 +168,7 @@ class Utility
 
   #create comment
   def self.create_comment(post, user, post_ary, users)
-    post_id = post.split(" ")[1].to_i
+    post_id = get_post_id (post)
     comment = $prompt.ask("Comment: ")
     Comment.create(comment: comment, account_id: user.id, post_id: post_id)
     desplay_post(post)
@@ -163,7 +178,7 @@ class Utility
 
 
   def self.create_like(post, user, post_ary, users)
-    post_id = post.split(" ")[1].to_i
+    post_id = get_post_id (post)
     likes = Like.where("post_id == ?", post_id)
     if likes.empty?
         user.likes.create(post_id: post_id)
@@ -203,13 +218,14 @@ class Utility
 
 
 
-  def self.edit_post(post)
+  def self.edit_post(post, post_ary, user, users)
     post_id = get_post_id(post)
     current_post = Post.find_by(id: post_id)
     edit = $prompt.ask("Edit Post: ")
     current_post.content = edit
     current_post.save
     desplay_post(post)
+    post_options(post, post_ary, user, users)
   end
 
 
