@@ -4,11 +4,25 @@ class Authentication
     Utility.artii_meun_title("Sign UP")
     name = $prompt.ask('What is your name? ')
     password = $prompt.mask("Create password:")
-    src_dir = Utility.pick_picture
-    Account.create(name: name, password: password, profile_picture_path: $dst_dir + "/#{File.basename(src_dir)}")
-    new_account = Account.where("name == ?", name)[-1]
-    Utility.clear_page
-    puts "Here is you Account ID #{new_account.id}"
+    repeat_password = $prompt.mask("Repeat Password: ")
+    if double_chack_passowrd(password, repeat_password)
+      src_dir = Utility.pick_picture
+      address = $prompt.ask('What is your address? ')
+      bio = $prompt.ask('Something about yourself. ')
+      Account.create(name: name, password: password, address: address, bio: bio, profile_picture_path: $dst_dir + "/#{File.basename(src_dir)}")
+      new_account = Account.where("name == ?", name)[-1]
+      Utility.clear_page
+      puts "Here is you Account ID #{new_account.id}"
+    else
+      choice = $prompt.select("One or more information is wrong, please try again.", ["Try Again", "Cancel"])
+      if choice == "Try Again"
+        Utility.clear_page
+        sign_up
+      elsif choice == "Cancel"
+        Utility.clear_page
+        Welcome.welcome_to_igl
+      end
+    end
   end
   #Login
   def self.login
