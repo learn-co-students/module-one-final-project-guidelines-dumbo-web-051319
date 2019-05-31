@@ -1,23 +1,23 @@
 class UserUI
   def self.master(user)
-    main_menu = Artii::Base.new :font => "slant"
-    puts main_menu.asciify("Main Menu")
-    choice = $prompt.select("User ID:#{user.id} | #{user.name}", %w(Create_Posts My_Post All_Posts Logout))
+    Utility.artii_meun_title("Main Menu")
+    choice = $prompt.select("User ID:#{user.id} | #{user.name}", ["Account Setting", "Create Posts", "My Post", "All Posts", "Logout"])
     Utility.clear_page
-    if choice == "Create_Posts"
+    if choice == "Create Posts"
      self.create_post(user)
-    elsif choice == 'My_Post'
+    elsif choice == 'My Post'
      self.my_post(user)
-    elsif choice == 'All_Posts'
+    elsif choice == 'All Posts'
      self.all_posts(user)
+    elsif choice == "Account Setting"
+      AccountProfile.account_menu(user)
     else
      Welcome.welcome_to_igl
     end
   end
 
   def self.create_post(user)
-    content = $prompt.ask('What do you want to post?', default: ENV['CONTENT'])
-    Utility.pick_picture(user, content)
+    Utility.create_post(user)
   end
 
   def self.my_post(user)

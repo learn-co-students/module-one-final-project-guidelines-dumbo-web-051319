@@ -1,46 +1,25 @@
 require 'catpix'
 class Utility
-  #Login
-  def self.login
-    account_id = $prompt.ask('Account ID:', default: ENV['ACCOUNT_ID'])
-    password = $prompt.mask("Password:")
-    clear_page
-    user = Account.find_by(id: account_id)
-    if user == nil || user.password != password
-      puts "Wrong Account ID or Password, please try again"
-      login
-    elsif user.password == password
-      welcome_back = Artii::Base.new :font => "slant"
-      puts welcome_back.asciify("Welcome back")
-      UserUI.master(user)
-    end
+  #Create a Post
+  def self.create_post(user)
+    Utility.artii_meun_title("Create Post")
+    dst_dir = "/Users/fanqiangmeng/Development/ActiveRecord/module-one-final-project-guidelines-dumbo-web-051319/picture"
+    content = $prompt.ask('What do you want to post?', default: ENV['CONTENT'])
+    src_dir = pick_picture
+    Post.create(account_id: user.id, content: content, create_at: Time.now, picture_path: dst_dir + "/#{File.basename(src_dir)}")
+    puts "Done"
+    UserUI.master(user)
   end
-
-
-
-
-  #Sign Up
-  def self.sign_up
-    name = $prompt.ask('What is your name?', default: ENV['New User'])
-    password = $prompt.mask("Create password:")
-    Account.create(name: name, password: password)
-    new_account = Account.where("name == ?", name)[-1]
-    puts "Here is you Account ID #{new_account.id}"
-  end
-
 
 
   #Upload Picture
-  def self.upload_picture(src_dir, user, content)
+  def self.upload_picture(src_dir)
     # src_dir = self.pick_picture
     dst_dir = "/Users/fanqiangmeng/Development/ActiveRecord/module-one-final-project-guidelines-dumbo-web-051319/picture"
     if File.exist? (src_dir)
       puts "Uploading #{File.basename(src_dir)}....."
       sleep(rand(5))
       FileUtils.cp(src_dir, dst_dir)
-      Post.create(account_id: user.id, content: content, picture_path: dst_dir + "/#{File.basename(src_dir)}")
-      puts "Done"
-      UserUI.master(user)
     else
       puts "Sorry, We can't find it."
     end
@@ -49,27 +28,27 @@ class Utility
 
 
   #Select a Picture, User can Preview and Upload
-  def self.pick_picture(user, content)
+  def self.pick_picture
     ary =  Dir["/Users/fanqiangmeng/Downloads/Picture_Sample/*.jpg"]
     pictures = ary.map {|ele| File.basename(ele)}
-    choice = $prompt.select("Pick one Picture", pictures)
+    choice = $prompt.select("Pick one Picture (Please use .jpg files)", pictures)
     clear_page
     src_dir = "/Users/fanqiangmeng/Downloads/Picture_Sample/#{choice}"
-    choice2 = $prompt.select("Pick one Picture", %w(Upload Preview Back))
+    choice2 = $prompt.select("", %w(Upload Preview Back))
     if choice2 == "Upload"
-      self.upload_picture(src_dir, user, content)
+      self.upload_picture(src_dir)
     elsif choice2 == "Preview"
       self.view_picture(src_dir)
       choice3 = $prompt.select("Pick one Picture", %w(Upload Back))
       if choice3 == "Back"
-        self.pick_picture(user, content)
+        self.pick_picture
       elsif choice3 == "Upload"
-        self.upload_picture(src_dir, user, content)
+        self.upload_picture(src_dir)
       end
     else
-      self.pick_picture(user, content)
+      self.pick_picture
     end
-    # src_dir
+    src_dir
   end
 
 
@@ -81,6 +60,28 @@ class Utility
     :limit_y => 0,
     :center_x => true,
     :center_y => true,
+    :bg => "black",
+    :bg_fill => true,
+    :resolution => "high"
+  end
+
+  def self.view_profile_picture(src_dir)
+    Catpix::print_image src_dir,
+    :limit_x => 0.5,
+    :limit_y => 0,
+    :center_x => false,
+    :center_y => false,
+    :bg => "black",
+    :bg_fill => true,
+    :resolution => "high"
+  end
+
+  def self.view_profile_picture_in_post(src_dir)
+    Catpix::print_image src_dir,
+    :limit_x => 0.1,
+    :limit_y => 0,
+    :center_x => false,
+    :center_y => false,
     :bg => "black",
     :bg_fill => true,
     :resolution => "high"
@@ -116,7 +117,7 @@ class Utility
     if choice == "Back"
       clear_page
       show_posts(user, users)
-    elsif choice == "Back_to_Main_Menu"
+    elsif choice == "Back to Main Menu"
       clear_page
       UserUI.master(user)
     elsif choice == "Comment"
@@ -143,7 +144,10 @@ class Utility
     likes_count = Like.where("post_id == ?", post_id).count
     post_info = Post.find_by(id: post_id)
     puts "----------------------------------------------------------------------"
+    src_dir = Account.find_by(id: post_info.account_id).profile_picture_path
+    view_profile_picture_in_post(src_dir)
     puts "#{Account.find_by(id: post_info.account_id).name}"
+    puts "#{post_info.create_at.localtime.to_s[0..18]}"
     puts "----------------------------------------------------------------------"
     view_picture(post_info.picture_path)
     puts "#{post_info.content}"
@@ -156,7 +160,7 @@ class Utility
         puts "#{Account.find_by(id: comment.account_id).name}"
         puts "#{comment.comment}"
         puts ""
-        sleep(1)
+        sleep(0.5)
       end
     else
       puts "No comments."
@@ -236,4 +240,10 @@ class Utility
     Like.where("post_id == ?", post_id).destroy_all
     show_posts(user, users)
   end
+
+  def self.artii_meun_title(title)
+    title_string = Artii::Base.new :font => "slant"
+    puts title_string.asciify("#{title}")
+  end
+
 end

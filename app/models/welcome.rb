@@ -1,18 +1,17 @@
 class Welcome
   def self.welcome_to_igl
     Utility.clear_page
-    welcome = Artii::Base.new :font => "slant"
-    puts welcome.asciify("Welcome to Instagram Lite")
-    choice = $prompt.select("", %w(Sign_up Log_in Exit))
-    if choice == "Sign_up"
-      Utility.sign_up
-      Utility.login
-    elsif choice == "Log_in"
-      Utility.login
+    Utility.artii_meun_title("Welcome to Instagram Lite")
+    choice = $prompt.select("", ["Sign up", "Log in", "Exit"])
+    Utility.clear_page
+    if choice == "Sign up"
+      Authentication.sign_up
+      Authentication.login
+    elsif choice == "Log in"
+      Authentication.login
     elsif choice == "Exit"
       Utility.clear_page
-      goodbye = Artii::Base.new :font => "slant"
-      puts goodbye.asciify("Goodbye !!! See ya")
+      Utility.artii_meun_title("Goodbye !!! See ya")
       exit
     end
   end

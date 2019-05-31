@@ -25,6 +25,6 @@ class AllPosts
     for i in 0...ary.length
       posts << get_together(id, i)
     end
-    posts
+    posts.sort_by {|post| Utility.get_post_id (post)}.reverse
   end
 end
