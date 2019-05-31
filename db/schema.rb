@@ -10,12 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 8) do
+ActiveRecord::Schema.define(version: 9) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "name"
     t.string "password"
     t.string "profile_picture_path"
+    t.string "address"
+    t.text "bio"
   end
 
   create_table "comments", force: :cascade do |t|

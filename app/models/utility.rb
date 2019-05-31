@@ -14,12 +14,10 @@ class Utility
 
   #Upload Picture
   def self.upload_picture(src_dir)
-    # src_dir = self.pick_picture
-    dst_dir = "/Users/fanqiangmeng/Development/ActiveRecord/module-one-final-project-guidelines-dumbo-web-051319/picture"
     if File.exist? (src_dir)
       puts "Uploading #{File.basename(src_dir)}....."
       sleep(rand(5))
-      FileUtils.cp(src_dir, dst_dir)
+      FileUtils.cp(src_dir, $dst_dir)
     else
       puts "Sorry, We can't find it."
     end

@@ -3,7 +3,10 @@ class AccountProfile
     acc_menu = Artii::Base.new :font => "slant"
     puts acc_menu.asciify("Account Menu")
     Utility.view_profile_picture(user.profile_picture_path)
-    choice = $prompt.select("User ID:#{user.id} | #{user.name}", ["Change Username", "Change Password", "Change Profile Picture", "Back to Main Menu", "Logout"])
+    puts "User ID:#{user.id} | #{user.name}"
+    puts "Address: #{user.address}"
+    puts user.bio
+    choice = $prompt.select("", ["Change Username", "Change Password", "Change Profile Picture", "Change Address", "Edit Bio", "Back to Main Menu", "Logout"])
     Utility.clear_page
     if choice == "Change Username"
       change_user_name(user)
@@ -11,6 +14,10 @@ class AccountProfile
       change_password(user)
     elsif choice == "Change Profile Picture"
       change_profile_picture(user)
+    elsif choice == "Change Address"
+      change_address(user)
+    elsif choice == "Edit Bio"
+      edit_bio(user)
     elsif choice == "Back to Main Menu"
       UserUI.master(user)
     elsif choice == "Logout"
@@ -20,6 +27,9 @@ class AccountProfile
       exit
     end
   end
+  # def self.desplay_user_info(user)
+  #
+  # end
 
   def self.change_user_name(user)
     new_user_name = $prompt.ask("New Username: ")
@@ -59,6 +69,24 @@ class AccountProfile
     user.profile_picture_path = $dst_dir + "/#{File.basename(src_dir)}"
     user.save
     user.reload
+    puts "Done"
+    sleep(1)
+    account_menu(user)
+  end
+
+  def self.change_address(user)
+    new_address = $prompt.ask("New Address: ")
+    user.address = new_address
+    user.save
+    puts "Done"
+    sleep(1)
+    account_menu(user)
+  end
+
+  def self.edit_bio(user)
+    new_bio = $prompt.ask("Edit Bio: ")
+    user.bio = new_bio
+    user.save
     puts "Done"
     sleep(1)
     account_menu(user)
