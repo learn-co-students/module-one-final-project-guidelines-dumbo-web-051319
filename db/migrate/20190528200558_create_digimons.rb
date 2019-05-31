@@ -11,6 +11,7 @@ class CreateDigimons < ActiveRecord::Migration[5.0]
       t.text :bio
       t.boolean :has_evo
       t.integer :evolution_id
+      t.integer :location_id
       t.timestamps
     end
   end

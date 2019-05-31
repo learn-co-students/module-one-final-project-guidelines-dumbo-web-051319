@@ -30,13 +30,13 @@ ActiveRecord::Schema.define(version: 20190529162159) do
     t.text     "bio"
     t.boolean  "has_evo"
     t.integer  "evolution_id"
+    t.integer  "location_id"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end
 
   create_table "locations", force: :cascade do |t|
     t.string   "name"
-    t.integer  "digimon_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
