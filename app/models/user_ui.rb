@@ -10,7 +10,7 @@ class UserUI
     elsif choice == 'All Posts'
      self.all_posts(user)
     elsif choice == "Account Setting"
-      AccountProfile.account_menu(user)
+      AccountProfile.display_account(user)
     else
      Welcome.welcome_to_igl
     end
