@@ -12,7 +12,7 @@ class CommandLineInterface
     ruby_clear
     if choice == 'Sign Up'
       puts 'Please Enter Your Name'
-      user_name = gets.chomp
+      user_name = gets.chomp.capitalize
       puts 'Please Enter Your Email'
       user_email = gets.chomp
       new_user = User.create(name: user_name.to_s, email: user_email.to_s)
@@ -80,7 +80,7 @@ class CommandLineInterface
             choice = prompt.select('', %w[YES NO],active_color: :cyan)
             next unless choice == 'YES'
 
-            puts 'What is the new date? (YYYY-MM-DD HH-MI)'
+            puts 'What is the new date? (YYYY-MM-DD HH:MI)'
             user_input = gets.chomp
             booking.update(date_time: user_input)
             puts 'Updating reservation'
@@ -242,7 +242,7 @@ class CommandLineInterface
               booking_name = gets.chomp
               puts 'Please enter the party size'
               booking_party_size = gets.chomp
-              puts 'Please enter the date of your reservation (YY-MM-DD HH-MI)'
+              puts 'Please enter the date of your reservation (YYYY-MM-DD HH:MI)'
               booking_date = gets.chomp
               puts 'Thank you for using RoofHopper, We are generating your reservation'
               puts '⏳⏳⏳⏳⏳'
@@ -275,7 +275,7 @@ class CommandLineInterface
           if choice == 'YES'
             puts 'Please Enter Your Party Size'
             booking_party_size = gets.chomp
-            puts 'Please Enter The Date of Your Reservation (YY-MM-DD HH-MI)'
+            puts 'Please Enter The Date of Your Reservation (YYYY-MM-DD HH-MI)'
             booking_date = gets.chomp
             puts 'Thank You For Using RoofHopper, We Are Generating Your Reservation'
             puts '⏳⏳⏳⏳⏳'
@@ -300,8 +300,8 @@ class CommandLineInterface
     elsif choice == 'Quit'
       sleep(1)
       puts "Have a Great Day #{$user.name}!"
+      sleep(1.5)
       ruby_clear
-      sleep(1)
       exit
     end
   end

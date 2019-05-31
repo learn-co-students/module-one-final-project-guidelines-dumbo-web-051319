@@ -13,7 +13,7 @@ fan = User.create(name:"Fan", email: "fan.@gmail.com")
 george = User.create(name:"George", email: "george.@gmail.com")
 henry = User.create(name:"Henry", email: "henry.@gmail.com")
 
-roof1=Roof.create(name:"Night of Joy", dress_code: "Casual", price_range: 1, location: "Brooklyn",  dog: "Yes",  food: "Yes",  ig_rating: 1,  entertainment: "No", bar: "Yes" )
+roof1=Roof.create(name:"Night Of Joy", dress_code: "Casual", price_range: 1, location: "Brooklyn",  dog: "Yes",  food: "Yes",  ig_rating: 1,  entertainment: "No", bar: "Yes" )
 roof2=Roof.create(name:"High Line", dress_code: "Casual", price_range: 2, location: "Manhattan",  dog: "No",  food: "No",  ig_rating: 3,  entertainment: "Yes", bar: "Yes" )
 roof6=Roof.create(name:"The Wythe Hotel", dress_code: "Semi Casual", price_range: 3, location: "Brooklyn",  dog: "Yes",  food: "Yes",  ig_rating: 4,  entertainment: "Yes", bar: "Yes" )
 roof5=Roof.create(name:"McClaren", dress_code: "Semi Casual", price_range: 3, location: "Manhattan",  dog: "No",  food: "Yes",  ig_rating: 3,  entertainment: "No", bar: "No" )
