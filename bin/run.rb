@@ -295,7 +295,7 @@ while menu_choice != "Log-Out?"
                   # end progress bar #
                 sleep(2)
                 puts "--------------------------------"
-                puts "Great! You record name have been updated"
+                puts "Great! Your record name have been updated"
                 puts "--------------------------------"
 
             ##### UPDATE RECORD -> DESCRIPTION ########
@@ -312,7 +312,7 @@ while menu_choice != "Log-Out?"
                   sleep(3)
                   spinner.success("(Changing Illness Name)")
                 puts "--------------------------------"
-                puts "Great! You description have been updated"
+                puts "Great! Your description have been updated"
                 puts "--------------------------------"
 
               ##### UPDATE RECORD -> BACK TO MENU ########
