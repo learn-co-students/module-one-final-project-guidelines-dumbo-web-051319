@@ -1,5 +1,6 @@
 require_relative '../config/environment'
+require_relative '../app/cli'
 
 
-
-puts "HELLO WORLD"
+digital_world
+login_or_signup
