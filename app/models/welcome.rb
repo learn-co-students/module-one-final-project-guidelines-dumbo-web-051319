@@ -12,6 +12,7 @@ class Welcome
     elsif choice == "Exit"
       Utility.clear_page
       Utility.artii_meun_title("Goodbye !!! See ya")
+      puts "By Fan and Tanuka"
       exit
     end
   end

@@ -7,7 +7,7 @@ class AllPosts
     Post.where("account_id == ?", id)[i].id
   end
   def self.get_post_content(id, i)
-    Post.where("account_id == ?", id)[i].content
+    Post.where("account_id == ?", id)[i].content[0..40]
   end
   def self.get_comment_count(id, i)
     Comment.where("post_id == ?", get_post_id(id, i)).count
