@@ -26,7 +26,7 @@ Medical Tracker relies our a user's account records to either manipulate their d
 * Yonas Fesehasion: Objection Relation structures, CLI App Functionality
 
 ## More About Our App
-Medical Tracker requires ActiveRecord, Rake, and a fil called Gemfile that installs TTY-Prompt and TTY-Spinner. All methods and classes are built using Ruby.
+Medical Tracker requires ActiveRecord, Rake, and gems TTY-Prompt and TTY-Spinner. All methods and classes are built using Ruby.
 
 ### License
 This project is licensed under the Learn.co Educational Content License. Please read `LICENSE.md` location in the directory or click on the following link (http://learn.co/content-license) for further details.
