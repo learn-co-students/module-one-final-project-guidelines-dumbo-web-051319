@@ -1,5 +1,5 @@
 require_relative '../config/environment'
 
+$prompt = TTY::Prompt.new
 
-
-puts "HELLO WORLD"
+Welcome.welcome_to_igl
